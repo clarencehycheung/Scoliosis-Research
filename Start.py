@@ -9,7 +9,7 @@ clearSet = {"r*", "data*", "plot*", "file*", 'datafile', 'datasize', 'data3D',
   'csvLength', 'paths'}
 clearSet.clear
 
-# 2. Be able to open data set
+# -------------------------Open Data Set------------------------------#
 Threshold1 = {3, 9.333}
 initial = 1
 initial1 = 1
