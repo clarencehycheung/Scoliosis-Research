@@ -1,5 +1,6 @@
 # -------------------------Import Libraries------------------------------#
 import numpy as np
+import pands as pd
 import open3d as o3
 import trimesh
 import probreg
@@ -17,4 +18,4 @@ numebrofthre = len(Threshold1)
 
 # directory to the EDM file 
 path = 'C:/Users/nehal/OneDrive/Desktop/Research ST/'
-file = np.loadtxt(path + 'EDM-1.csv')
+file = pd.read_csv(path + 'EDM-1.csv')
