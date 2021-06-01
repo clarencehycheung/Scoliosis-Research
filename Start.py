@@ -17,6 +17,11 @@ initial1 = 1
 numebrofthre = len(Threshold1)
 
 # directory to the EDM file 
-path = 'C:/Users/nehal/OneDrive/Desktop/Research ST/'
-file = pd.read_csv(path + 'EDM-1.csv', header=None)
-file.drop([0, 1, 2, 6, 7, 8], axis=1, inplace=True)
+# Prompts user to select the folder that the .csv is located in 
+path = askdirectory(title='Select Folder') 
+datafile = pd.read_csv(path + '/EDM-1.csv', header=None)
+# Delete columns
+datafile.drop([0, 1, 2, 6, 7, 8], axis=1, inplace=True)
+# Rename columns
+data3D = datafile.rename(columns={3: 0, 4: 1, 5: 2, 9: 3}, inplace=False)
+
