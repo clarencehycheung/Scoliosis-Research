@@ -1,6 +1,6 @@
 # -------------------------Import Libraries------------------------------#
 import numpy as np
-import pands as pd
+import pandas as pd
 import open3d as o3
 import trimesh
 import probreg
