@@ -18,4 +18,5 @@ numebrofthre = len(Threshold1)
 
 # directory to the EDM file 
 path = 'C:/Users/nehal/OneDrive/Desktop/Research ST/'
-file = pd.read_csv(path + 'EDM-1.csv')
+file = pd.read_csv(path + 'EDM-1.csv', header=None)
+file.drop([0, 1, 2, 6, 7, 8], axis=1, inplace=True)
