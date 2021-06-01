@@ -17,7 +17,7 @@ numebrofthre = len(Threshold1)
 
 #directory to the EDM file 
 path = 'C:/Users/nehal/OneDrive/Desktop/Research ST'
-file = np.loadtxt(path + "EDM-1.csv")
+file = np.loadtxt(path + 'EDM-1.csv')
 
 # directory = SystemDialogInput["Directory"]
 # fn1 = FileNames[] numberoffiles=Length[fn1]
