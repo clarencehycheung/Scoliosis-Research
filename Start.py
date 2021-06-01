@@ -2,7 +2,7 @@
 import numpy as np
 import open3d as o3
 import trimesh
-import proberg
+import probreg
 
 clearSet = {"r*", "data*", "plot*", "file*", 'datafile', 'datasize', 'data3D', \
   'STDcol', 'numebrofthre', 'directory', 'fnames', 'Numberofolders', 'csvName', \
