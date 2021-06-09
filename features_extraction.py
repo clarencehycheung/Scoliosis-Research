@@ -19,7 +19,7 @@ for subdir, dirs, files in os.walk(path):
             # Rename columns
             data3D = datafile.rename(columns={3: 0, 4: 1, 5: 2, 9: 3}, inplace=False)
             # Find data dimensions
-            datasize = data3D.ndim
+            datasize = data3D.shape
             # Deviations
             # Test coordinates
             # Rotate points for Brazil data
