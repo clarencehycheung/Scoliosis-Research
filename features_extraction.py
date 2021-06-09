@@ -18,24 +18,29 @@ for subdir, dirs, files in os.walk(path):
             datafile.drop([0, 1, 2, 6, 7, 8], axis=1, inplace=True)
             # Rename columns
             data3D = datafile.rename(columns={3: 0, 4: 1, 5: 2, 9: 3}, inplace=False)
+            # Find data dimensions
+            datasize = data3D.ndim
+            # Deviations
+            # Test coordinates
+            # Rotate points for Brazil data
 
 # Finding height of torso
-maxy = max(data3D) #Needs Fixing - Specify Column
-miny = min(data3D) #Needs Fixing - Specify Column
+maxy = max(data3D[2]) #Needs Fixing - Specify Column
+miny = min(data3D[2]) #Needs Fixing - Specify Column
 xzplane01 = Plane(Point3D(0, maxy, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
 xzplane02 = Plane(Point3D(0, miny, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
 # Find distance between xzplane02 and maxy
 
 # Finding width of torso
-maxx = max(data3D) #Needs Fixing - Specify Column
-minx = min(data3D) #Needs Fixing - Specify Column
+maxx = max(data3D[1]) #Needs Fixing - Specify Column
+minx = min(data3D[1]) #Needs Fixing - Specify Column
 yzplane01 = Plane(Point3D(0, maxx, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
 yzplane02 = Plane(Point3D(0, minx, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
 # Find distance between yzplane02 and maxx
 
 # Finding depth of torso
-maxz = max(data3D) #Needs Fixing - Specify Column
-minz = min(data3D) #Needs Fixing - Specify Column
+maxz = max(data3D[3]) #Needs Fixing - Specify Column
+minz = min(data3D[3]) #Needs Fixing - Specify Column
 xyplane01 = Plane(Point3D(0, maxz, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
 xyplane02 = Plane(Point3D(0, minz, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
 # Find distance between xyplane02 and maxz
