@@ -20,7 +20,22 @@ for subdir, dirs, files in os.walk(path):
             data3D = datafile.rename(columns={3: 0, 4: 1, 5: 2, 9: 3}, inplace=False)
 
 # Finding height of torso
-maxy = max(data3D)
-miny = min(data3D)
+maxy = max(data3D) #Needs Fixing - Specify Column
+miny = min(data3D) #Needs Fixing - Specify Column
 xzplane01 = Plane(Point3D(0, maxy, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
 xzplane02 = Plane(Point3D(0, miny, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
+# Find distance between xzplane02 and maxy
+
+# Finding width of torso
+maxx = max(data3D) #Needs Fixing - Specify Column
+minx = min(data3D) #Needs Fixing - Specify Column
+yzplane01 = Plane(Point3D(0, maxx, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
+yzplane02 = Plane(Point3D(0, minx, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
+# Find distance between yzplane02 and maxx
+
+# Finding depth of torso
+maxz = max(data3D) #Needs Fixing - Specify Column
+minz = min(data3D) #Needs Fixing - Specify Column
+xyplane01 = Plane(Point3D(0, maxz, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
+xyplane02 = Plane(Point3D(0, minz, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
+# Find distance between xyplane02 and maxz
