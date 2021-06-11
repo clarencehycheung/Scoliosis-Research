@@ -33,39 +33,14 @@ for subdir, dirs, files in os.walk(path):
 
 
             # Finding height of torso
-            maxy = data3D.iloc[data3D[2].idxmax()]
-            maxy = [maxy.iloc[0], maxy.iloc[1], maxy.iloc[2]]
-            miny = data3D.iloc[data3D[2].idxmin()]
-            miny = [miny.iloc[0], miny.iloc[1], miny.iloc[2]]
-            
-            
-            xzplane01 = Plane(Point3D(0, maxy, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
-            xzplane02 = Plane(Point3D(0, miny, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
-            # Find distance between xzplane02 and maxy
-            theight = maxy3D.distance(xzplane02)
-
-
-
+            maxy = max(data3D[2])
+            miny = min(data3D[2])
+            theight = maxy - miny
             # Finding width of torso
-            maxx = data3D.iloc[data3D[1].idxmax()]
-            maxx = [maxx.iloc[0], maxx.iloc[1], maxx.iloc[2]]
-            minx = data3D.iloc[data3D[1].idxmin()]
-            minx = [minx.iloc[0], minx.iloc[1], minx.iloc[2]]
-    
-            
-            yzplane01 = Plane(Point3D(0, maxx, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
-            yzplane02 = Plane(Point3D(0, minx, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
-            # Find distance between yzplane02 and maxx
-            twidth = maxx3D.distance(yzplane02)
-
+            maxx = max(data3D[1])
+            minx = min(data3D[1])
+            twidth = maxx -minx
             # Finding depth of torso
-            maxz = data3D.iloc[data3D[3].idxmax()]
-            maxz = [maxz.iloc[0], maxz.iloc[1], maxz.iloc[2]]
-            minz = data3D.iloc[data3D[3].idxmin()]
-            minz = [minz.iloc[0], minz.iloc[1], minz.iloc[2]]
-            
-            
-            xyplane01 = Plane(Point3D(0, maxz, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
-            xyplane02 = Plane(Point3D(0, minz, 0), Point3D(1, 0, 0), Point3D(0, 0, 1))
-            # Find distance between xyplane02 and maxz
-            tdepth = maxz3D.distance(xyplane02)
+            maxz = max(data3D[3])
+            minz = min(data3D[3])
+            tdepth = maxz - minz
