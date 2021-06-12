@@ -32,15 +32,30 @@ for subdir, dirs, files in os.walk(path):
             data3D[1] = -1*data3D[1]
 
 
-            # Finding height of torso
+            # ------------------Finding Height of Torso----------------------#
             maxy = max(data3D[2])
             miny = min(data3D[2])
             theight = maxy - miny
-            # Finding width of torso
+            # ------------------Finding Width of Torso----------------------#
             maxx = max(data3D[1])
             minx = min(data3D[1])
-            twidth = maxx -minx
-            # Finding depth of torso
+            twidth = maxx - minx
+            # ------------------Finding Depth of Torso----------------------#
             maxz = max(data3D[3])
             minz = min(data3D[3])
             tdepth = maxz - minz
+
+            # ------------------Adjust Torso Alignment----------------------#
+
+            # ---------------Finding Back Point of the Torso-----------------#
+            # Finding mean x value
+            centerx = sum(data3D[1]) / len(data3D[1])
+            # Finding mean z value
+            centerz = sum(data3D[3]) / len(data3D[3])
+            yzclosestpoint = data3D
+            # Finds all points that x-values are 4 apart from mean
+            yzclosestpoint = yzclosestpoint[yzclosestpoint[1] < (centerx + 4)]
+            yzclosestpoint = yzclosestpoint[yzclosestpoint[1] > (centerx - 4)]
+            # Finds points with z values greater than mean so all back points are eliminated
+            B6 = yzclosestpoint
+            B6 = B6[B6[3] > centerz]
