@@ -59,3 +59,6 @@ for subdir, dirs, files in os.walk(path):
             # Finds points with z values greater than mean so all back points are eliminated
             B6 = yzclosestpoint
             B6 = B6[B6[3] > centerz]
+            # Finds the lowest point on the back
+            B4 = B6[2].idxmin()
+            B4 = B6.loc[[B4]]
