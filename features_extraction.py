@@ -62,3 +62,12 @@ for subdir, dirs, files in os.walk(path):
             # Finds the lowest point on the back
             B4 = B6[2].idxmin()
             B4 = B6.loc[[B4]]
+
+            # Move origin to back point Maybe better way to do this..
+            x_ones = np.ones((datasize, 1))
+            data3D_ones = np.hstack((data3D, x_ones))
+            Translate_matrix = np.array([[1, 0, 0, 0],
+                                         [0, 1, 0, 0],
+                                         [0, 0, 1, 0],
+                                         [float(-B4[1]), float(-B4[2]), float(-B4[3]), 1]])
+            tpts = np.matmul(data3D_ones, Translate_matrix)[:, :-1]
