@@ -78,16 +78,16 @@ for subdir, dirs, files in os.walk(path):
             data3Dnewco['3'] = STDcol
             
             # ------------------Finding Height of Torso----------------------#
-            B7 = max(data3D[2])
-            B8 = min(data3D[2])
+            B7 = max(tpts[2])
+            B8 = min(tpts[2])
             dis1 = B7 - B8
             
             # ------------------Finding Width of Torso----------------------#
-            B9 = max(data3D[1])
-            B10 = min(data3D[1])
+            B9 = max(tpts[1])
+            B10 = min(tpts[1])
             dis3 = B9 - B10
             
             # ------------------Finding Depth of Torso----------------------#
-            B11 = max(data3D[3])
-            B12 = min(data3D[3])
+            B11 = max(tpts[3])
+            B12 = min(tpts[3])
             dis5 = B11 - B12
