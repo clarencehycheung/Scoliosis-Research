@@ -31,15 +31,16 @@ for subdir, dirs, files in os.walk(path):
             data3D = data3D.rename(columns={1: 1, 3: 2, 2: 3}, inplace=False)
             data3D[1] = -1*data3D[1]
 
-
             # ------------------Finding Height of Torso----------------------#
             maxy = max(data3D[2])
             miny = min(data3D[2])
             theight = maxy - miny
+            
             # ------------------Finding Width of Torso----------------------#
             maxx = max(data3D[1])
             minx = min(data3D[1])
             twidth = maxx - minx
+            
             # ------------------Finding Depth of Torso----------------------#
             maxz = max(data3D[3])
             minz = min(data3D[3])
@@ -75,3 +76,18 @@ for subdir, dirs, files in os.walk(path):
             # ---------------Add STD Column to data3D-----------------#
             data3Dnewco = pd.DataFrame(tpts)
             data3Dnewco['3'] = STDcol
+            
+            # ------------------Finding Height of Torso----------------------#
+            B7 = max(data3D[2])
+            B8 = min(data3D[2])
+            dis1 = B7 - B8
+            
+            # ------------------Finding Width of Torso----------------------#
+            B9 = max(data3D[1])
+            B10 = min(data3D[1])
+            dis3 = B9 - B10
+            
+            # ------------------Finding Depth of Torso----------------------#
+            B11 = max(data3D[3])
+            B12 = min(data3D[3])
+            dis5 = B11 - B12
