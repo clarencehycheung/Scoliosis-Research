@@ -71,3 +71,7 @@ for subdir, dirs, files in os.walk(path):
                                          [0, 0, 1, 0],
                                          [float(-B4[1]), float(-B4[2]), float(-B4[3]), 1]])
             tpts = np.matmul(data3D_ones, Translate_matrix)[:, :-1]
+            
+            # ---------------Add STD Column to data3D-----------------#
+            data3Dnewco = pd.DataFrame(tpts)
+            data3Dnewco['3'] = STDcol
