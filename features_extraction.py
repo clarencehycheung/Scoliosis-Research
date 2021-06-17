@@ -75,7 +75,7 @@ for subdir, dirs, files in os.walk(path):
             
             # ---------------Add STD Column to data3D-----------------#
             data3Dnewco = pd.DataFrame(tpts)
-            data3Dnewco['3'] = STDcol
+            data3Dnewco['STD'] = STDcol
             
             # ------------------Finding Height of Torso----------------------#
             B7 = max(tpts[2])
