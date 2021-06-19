@@ -98,6 +98,9 @@ for subdir, dirs, files in os.walk(path):
             dis5 = B11 - B12
             
             # -------Separate Positive and Negative Patches in New Coordinate--------#
-            data3Dnewco1 = data3Dnewco.sort_values(by=1)
-            for i in range (datasize):
-                # if.....
+            for counter1 in range(initial1, numebrofthre + initial1):
+                dataDCMp = []
+                dataDCMn = []
+                data3Dnewco1 = data3Dnewco.sort_values(by=1)
+                for i in range(datasize):
+                    if data3Dnewco1.loc[i, 1] > 0 and ...............
