@@ -91,3 +91,8 @@ for subdir, dirs, files in os.walk(path):
             B11 = max(tpts[3])
             B12 = min(tpts[3])
             dis5 = B11 - B12
+            
+            # -------Separate Positive and Negative Patches in New Coordinate--------#
+            data3Dnewco1 = data3Dnewco.sort_values(by=1)
+            for i in range (datasize):
+                # if.....
