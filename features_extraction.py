@@ -5,9 +5,14 @@ from tkinter.filedialog import askdirectory
 import os
 from sympy import Point3D, Plane
 
+# -------------------------Set initial values------------------------------#
+Threshold1 = {3, 9.333}
+initial = 1
+initial1 = 1
+numebrofthre = len(Threshold1)
+
 # Prompting user to select the parent folder
 path = askdirectory(title='Select Folder')
-
 
 # Loops through the subfolders in the parent folder and finds the EDM-1.csv files
 for subdir, dirs, files in os.walk(path):
@@ -64,7 +69,7 @@ for subdir, dirs, files in os.walk(path):
             B4 = B6[2].idxmin()
             B4 = B6.loc[[B4]]
 
-            # Move origin to back point Maybe better way to do this..
+            # ---------------Move Origin to Back Point-----------------#
             x_ones = np.ones((datasize, 1))
             data3D_ones = np.hstack((data3D, x_ones))
             Translate_matrix = np.array([[1, 0, 0, 0],
