@@ -6,7 +6,7 @@ import os
 from sympy import Point3D, Plane
 
 # -------------------------Set initial values------------------------------#
-Threshold1 = {3, 9.333}
+Threshold1 = [3, 9.333]
 initial = 1
 initial1 = 1
 numebrofthre = len(Threshold1)
@@ -98,9 +98,15 @@ for subdir, dirs, files in os.walk(path):
             dis5 = B11 - B12
             
             # -------Separate Positive and Negative Patches in New Coordinate--------#
-            for counter1 in range(initial1, numebrofthre + initial1):
-                dataDCMp = []
-                dataDCMn = []
+            for counter1 in range(numebrofthre): #i think this will need to start from 0 for indexing
+                dataDCMp = pd.DataFrame()
+                dataDCMn = pd.DataFrame()
                 data3Dnewco1 = data3Dnewco.sort_values(by=1)
                 for i in range(datasize):
-                    if data3Dnewco1.loc[i, 1] > 0 and ...............
+                    if data3Dnewco1.iloc[i, 0] > 0:
+                        if data3Dnewco1.iloc[i,3] > Threshold1[counter1]:
+                             dataDCMp = dataDCMp.append(data3Dnewco1.iloc[i])
+                        elif data3Dnewco1.iloc[i,3] < -Threshold1[counter1]:
+                             dataDCMn = dataDCMn.append(data3Dnewco1.iloc[i])
+                print(dataDCMp)
+                print(dataDCMn)
