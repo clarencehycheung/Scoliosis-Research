@@ -4,8 +4,8 @@ import pandas as pd
 from tkinter.filedialog import askdirectory
 import os
 from sympy import Point3D, Plane
-#from mpl_toolkits.mplot3d import Axes3D
-#import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 
 # -------------------------Set initial values------------------------------#
 Threshold1 = [3, 9.333]
@@ -37,34 +37,60 @@ for subdir, dirs, files in os.walk(path):
             data3D = data3D.reindex(columns=[1, 3, 2])
             data3D = data3D.rename(columns={1: 1, 3: 2, 2: 3}, inplace=False)
             data3D[1] = -1*data3D[1]
-            # Plot
-            # fig = plt.figure()
-            # ax = fig.add_subplot(1, 2, 1, projection='3d')
-            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.1)
-            # plt.show()
 
             # ------------------Finding Height of Torso----------------------#
             maxy = max(data3D[2])
             miny = min(data3D[2])
             theight = maxy - miny
+            # Plot with maxy and miny planes
+            # fig = plt.figure()
+            # ax = fig.add_subplot(4, 4, 1, projection='3d')
+            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.1)
+            # axis1 = np.linspace(-300, 300, 300)
+            # axis2 = np.linspace(-300, 300, 300)
+            # plane1, plane2 = np.meshgrid(axis1, axis2)
+            # ax.plot_surface(X=plane1, Y=float(maxy), Z=plane2, color='g', alpha=0.6)
+            # ax.plot_surface(X=plane1, Y=float(miny), Z=plane2, color='b', alpha=0.6)
             
             # ------------------Finding Width of Torso----------------------#
             maxx = max(data3D[1])
             minx = min(data3D[1])
             twidth = maxx - minx
+            # Plot with maxx and minx planes
+            # ax = fig.add_subplot(4, 4, 2, projection='3d')
+            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.1)
+            # ax.plot_surface(X=float(maxx), Y=plane1, Z=plane2, color='g', alpha=0.6)
+            # ax.plot_surface(X=float(minx), Y=plane1, Z=plane2, color='b', alpha=0.6)
             
             # ------------------Finding Depth of Torso----------------------#
             maxz = max(data3D[3])
             minz = min(data3D[3])
             tdepth = maxz - minz
+            # Plot with maxz, miny planes
+            #
+            #
+            # Plot with maxx, maxy, maxz, minx, miny, minz planes
+            # ax = fig.add_subplot(4, 4, 4, projection='3d')
+            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.1)
+            # ax.plot_surface(X=plane1, Y=float(maxy), Z=plane2, color='g', alpha=0.2)
+            # ax.plot_surface(X=plane1, Y=float(miny), Z=plane2, color='b', alpha=0.2)
+            # ax.plot_surface(X=float(maxx), Y=plane1, Z=plane2, color='r', alpha=0.2)
+            # ax.plot_surface(X=float(minx), Y=plane1, Z=plane2, color='y', alpha=0.2)
 
             # ------------------Adjust Torso Alignment----------------------#
 
             # ---------------Finding Back Point of the Torso-----------------#
             # Finding mean x value
             centerx = sum(data3D[1]) / len(data3D[1])
+            # Finding mean y value
+            centery = sum(data3D[2]) / len(data3D[2])
             # Finding mean z value
             centerz = sum(data3D[3]) / len(data3D[3])
+            # Plot
+            # ax = fig.add_subplot(4, 4, 5, projection='3d')
+            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.05)
+            # ax.scatter(centerx, centery, centerz, color='r', alpha=1)
+           
             yzclosestpoint = data3D
             # Finds all points that x-values are 4 apart from mean
             yzclosestpoint = yzclosestpoint[yzclosestpoint[1] < (centerx + 4)]
@@ -72,9 +98,20 @@ for subdir, dirs, files in os.walk(path):
             # Finds points with z values greater than mean so all back points are eliminated
             B6 = yzclosestpoint
             B6 = B6[B6[3] > centerz]
+            # Plot
+            # ax = fig.add_subplot(4, 4, 6, projection='3d')
+            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.05)
+            # ax.scatter(B6[1], B6[2], B6[3], color='r', alpha=1)
+            
             # Finds the lowest point on the back
             B4 = B6[2].idxmin()
             B4 = B6.loc[[B4]]
+            # Plot with lowest back point
+            # ax = fig.add_subplot(4, 4, 7, projection='3d')
+            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.05)
+            # ax.scatter(B4[1], B4[2], B4[3], color='r', alpha=1)
+            # Plot with centerx plane, yzclosest points, B4
+            #
 
             # ---------------Move Origin to Back Point-----------------#
             x_ones = np.ones((datasize, 1))
@@ -117,3 +154,8 @@ for subdir, dirs, files in os.walk(path):
                              dataDCMn = dataDCMn.append(data3Dnewco1.iloc[i])
                 print(dataDCMp)
                 print(dataDCMn)
+                
+                
+                
+            # Plot Output
+            #plt.show()            
