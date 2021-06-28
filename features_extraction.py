@@ -4,6 +4,8 @@ import pandas as pd
 from tkinter.filedialog import askdirectory
 import os
 from sympy import Point3D, Plane
+#from mpl_toolkits.mplot3d import Axes3D
+#import matplotlib.pyplot as plt
 
 # -------------------------Set initial values------------------------------#
 Threshold1 = [3, 9.333]
