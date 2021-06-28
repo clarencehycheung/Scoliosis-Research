@@ -39,7 +39,7 @@ for subdir, dirs, files in os.walk(path):
             data3D[1] = -1*data3D[1]
             # Plot
             # fig = plt.figure()
-            # ax = fig.add_subplot(25, 2, 1, projection='3d')
+            # ax = fig.add_subplot(1, 2, 1, projection='3d')
             # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.1)
             # plt.show()
 
