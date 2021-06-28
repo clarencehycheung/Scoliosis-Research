@@ -35,6 +35,11 @@ for subdir, dirs, files in os.walk(path):
             data3D = data3D.reindex(columns=[1, 3, 2])
             data3D = data3D.rename(columns={1: 1, 3: 2, 2: 3}, inplace=False)
             data3D[1] = -1*data3D[1]
+            # Plot
+            # fig = plt.figure()
+            # ax = fig.add_subplot(25, 2, 1, projection='3d')
+            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.1)
+            # plt.show()
 
             # ------------------Finding Height of Torso----------------------#
             maxy = max(data3D[2])
