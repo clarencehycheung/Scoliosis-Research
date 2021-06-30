@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 Threshold1 = [3, 9.333]
 initial = 1
 initial1 = 1
-numebrofthre = len(Threshold1)
+numberofthre = len(Threshold1)
 
 # Prompting user to select the parent folder
 path = askdirectory(title='Select Folder')
@@ -22,17 +22,15 @@ for subdir, dirs, files in os.walk(path):
         filepath = subdir + os.sep + file
         if filepath.endswith("EDM-1.csv"):
             datafile = pd.read_csv(filepath, header=None)
-            # Delete columns
-            datafile.drop([0, 1, 2, 6, 7, 8], axis=1, inplace=True)
+            # Delete reference coordinate and deviation columns, keep test coordinate columns
+            data3D = datafile.drop(datafile.iloc[:, 3:], axis=1, inplace=False)
             # Rename columns
-            data3D = datafile.rename(columns={3: 1, 4: 2, 5: 3, 9: 4}, inplace=False)
+            data3D.rename(columns={0: 1, 1: 2, 2: 3}, inplace=True)
             # Find data dimensions
             datadimensions = data3D.shape
             datasize = datadimensions[0]
-            # Deviations column data
-            STDcol = data3D[4]
-            # Test coordinates
-            data3D.drop([4], axis=1, inplace=True)
+            # Total deviation column data
+            STDcol = datafile[9]
             # Rotate points for Brazil data
             data3D = data3D.reindex(columns=[1, 3, 2])
             data3D = data3D.rename(columns={1: 1, 3: 2, 2: 3}, inplace=False)
@@ -140,22 +138,26 @@ for subdir, dirs, files in os.walk(path):
             B11 = max(tpts[3])
             B12 = min(tpts[3])
             dis5 = B11 - B12
-            
-            # -------Separate Positive and Negative Patches in New Coordinate--------#
-            for counter1 in range(numebrofthre): #i think this will need to start from 0 for indexing
-                dataDCMp = pd.DataFrame()
-                dataDCMn = pd.DataFrame()
+
+            # -------Separate positive and negative patches on left and right side--------#
+            for counter1 in range(numberofthre):
+                dataDCMRp = pd.DataFrame()
+                dataDCMRn = pd.DataFrame()
+                dataDCMLp = pd.DataFrame()
+                dataDCMLn = pd.DataFrame()
                 data3Dnewco1 = data3Dnewco.sort_values(by=1)
                 for i in range(datasize):
                     if data3Dnewco1.iloc[i, 0] > 0:
-                        if data3Dnewco1.iloc[i,3] > Threshold1[counter1]:
-                             dataDCMp = dataDCMp.append(data3Dnewco1.iloc[i])
-                        elif data3Dnewco1.iloc[i,3] < -Threshold1[counter1]:
-                             dataDCMn = dataDCMn.append(data3Dnewco1.iloc[i])
-                print(dataDCMp)
-                print(dataDCMn)
-                
-                
-                
+                        if data3Dnewco1.iloc[i, 3] > Threshold1[counter1]:
+                             dataDCMRp = dataDCMRp.append(data3Dnewco1.iloc[i])
+                        elif data3Dnewco1.iloc[i, 3] < -Threshold1[counter1]:
+                            dataDCMRn = dataDCMRn.append(data3Dnewco1.iloc[i])
+                    elif data3Dnewco1.iloc[i, 0] < 0:
+                        if data3Dnewco1.iloc[i, 3] > Threshold1[counter1]:
+                             dataDCMLp = dataDCMLp.append(data3Dnewco1.iloc[i])
+                        elif data3Dnewco1.iloc[i, 3] < -Threshold1[counter1]:
+                             dataDCMLn = dataDCMLn.append(data3Dnewco1.iloc[i])
+
+
             # Plot Output
             #plt.show()            
