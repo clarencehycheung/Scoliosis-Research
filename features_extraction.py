@@ -6,6 +6,8 @@ import os
 from sympy import Point3D, Plane
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import open3d as o3
+import copy
 
 # -------------------------Set initial values------------------------------#
 Threshold1 = [3, 9.333]
@@ -157,6 +159,110 @@ for subdir, dirs, files in os.walk(path):
                              dataDCMLp = dataDCMLp.append(data3Dnewco1.iloc[i])
                         elif data3Dnewco1.iloc[i, 3] < -Threshold1[counter1]:
                              dataDCMLn = dataDCMLn.append(data3Dnewco1.iloc[i])
+
+            #WORK IN PROGRESS
+            # # -------Separate positive and negative patches on left and right side--------#
+            # ss = {'Rp0': "Rp", 'Rn0': "Rn", 'Lp0': "Lp", 'Ln0': "Ln"}
+            # dataDCMall = {}
+            # for counter1 in range(numberofthre):
+            #     for i, j in ss.items():
+            #         dataDCMall["dataDCM"+j]=pd.DataFrame()
+            #     # for k,l in dataDCMall.items():
+            #     #     exec(f"{k}=l")
+            #
+            #     data3Dnewco1 = data3Dnewco.sort_values(by=1)
+            #     for k in range(datasize):
+            #         if data3Dnewco1.iloc[k, 0] > 0:
+            #             if data3Dnewco1.iloc[k, 3] > Threshold1[counter1]:
+            #                  dataDCMall["dataDCMRp"] = dataDCMall["dataDCMRp"].append(data3Dnewco1.iloc[k])
+            #             elif data3Dnewco1.iloc[k, 3] < -Threshold1[counter1]:
+            #                 dataDCMall["dataDCMRn"] = dataDCMall["dataDCMRn"].append(data3Dnewco1.iloc[k])
+            #         elif data3Dnewco1.iloc[k, 0] < 0:
+            #             if data3Dnewco1.iloc[k, 3] > Threshold1[counter1]:
+            #                  dataDCMall["dataDCMLp"] = dataDCMall["dataDCMLp"].append(data3Dnewco1.iloc[k])
+            #             elif data3Dnewco1.iloc[k, 3] < -Threshold1[counter1]:
+            #                  dataDCMall["dataDCMLn"] = dataDCMall["dataDCMLp"].append(data3Dnewco1.iloc[k])
+            #     print(dataDCMall)
+            #
+            #
+            #     # -------Separate individual patches--------# #WIP will change
+            #     # for i, j in dataDCMall.items():
+            #     red = [1.0, 0.0, 0.0]
+            #     gray = [0.5, 0.5, 0.5]
+            #
+            #     arrayDCMRp = dataDCMall["dataDCMRp"].iloc[:, 0:3].to_numpy()
+            #     cloudDCMRp = o3.geometry.PointCloud()
+            #     cloudDCMRp.points = o3.utility.Vector3dVector(arrayDCMRp)
+            #     cloudDCMRp.estimate_normals()
+            #     cloudDCMRp.orient_normals_consistent_tangent_plane(4)
+            #     cloudDCMRp.paint_uniform_color(red)
+            #     #depth = 5
+            #     #distance = np.asarray(cloudDCMRp.compute_nearest_neighbor_distance())
+            #     mu_distance = 4 #np.mean(distance)
+            #     radii_list = o3.utility.DoubleVector(np.array([0.50, 1.00, 1.5, 2.00]) * mu_distance)
+            #
+            #     meshDCMRp = o3.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd=cloudDCMRp,
+            #                                                                           radii=radii_list)
+            #     meshDCMRp.compute_triangle_normals()
+            #     meshDCMRp.compute_vertex_normals()
+            #
+            #     meshDCMRp.paint_uniform_color(gray)
+            #     vis = o3.visualization.Visualizer()
+            #     vis.create_window()
+            #     vis.add_geometry(meshDCMRp)
+            #     vis.add_geometry(cloudDCMRp)
+            #     ren = vis.get_render_option()
+            #     ren.mesh_show_wireframe = True
+            #     ren.mesh_show_back_face = True
+            #     ren.point_size = 5
+            #     vis.run()
+            #     #print(meshDCMRp.get_surface_area())
+            #
+            #     numberofvertices = np.asarray(meshDCMRp.vertices).shape[0]
+            #
+            #
+            #     while numberofvertices > 0:
+            #
+            #         triangle_clusters, cluster_n_triangles, cluster_area = (
+            #             meshDCMRp.cluster_connected_triangles())
+            #         triangle_clusters = np.asarray(triangle_clusters)
+            #         cluster_n_triangles = np.asarray(cluster_n_triangles)
+            #         cluster_area = np.asarray(cluster_area)
+            #
+            #         print(triangle_clusters)
+            #         print(cluster_n_triangles)
+            #         print(cluster_area)
+            #
+            #         triangles_to_remove = cluster_n_triangles[triangle_clusters] < 20
+            #         meshDCMRp.remove_triangles_by_mask(triangles_to_remove)
+            #         o3.visualization.draw_geometries([meshDCMRp])
+            #
+            #         triangle_clusters, cluster_n_triangles, cluster_area = (
+            #             meshDCMRp.cluster_connected_triangles())
+            #         triangle_clusters = np.asarray(triangle_clusters)
+            #         cluster_n_triangles = np.asarray(cluster_n_triangles)
+            #         cluster_area = np.asarray(cluster_area)
+            #
+            #
+            #         mesh_0=copy.deepcopy(meshDCMRp)
+            #         lstccmpRp = []
+            #         remove_all = []
+            #         for i in range(0, len(cluster_n_triangles)):
+            #             meshtemp = copy.deepcopy(mesh_0)
+            #             remove_rest = triangle_clusters != i
+            #             remove_all.append(triangle_clusters == i)
+            #             meshtemp.remove_triangles_by_mask(remove_rest)
+            #             meshtemp.remove_unreferenced_vertices()
+            #             arraytemp=np.asarray(meshtemp.vertices).tolist()
+            #             lstccmpRp.append(arraytemp)
+            #         remove_any=np.any(remove_all, axis=0)
+            #         meshDCMRp.remove_triangles_by_mask(remove_any)
+            #         meshDCMRp.remove_unreferenced_vertices()
+            #
+            #         numberofvertices = np.asarray(meshDCMRp.vertices).shape[0]
+            #         print(lstccmpRp)
+            #         print(numberofvertices)
+
 
 
             # Plot Output
