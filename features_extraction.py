@@ -142,7 +142,7 @@ for subdir, dirs, files in os.walk(path):
             dis5 = B11 - B12
 
             # -------Separate positive and negative patches on left and right side--------#
-            for counter1 in range(numberofthre):
+            for threshold in Threshold1:
                 dataDCM = {"Rp": pd.DataFrame(), "Rn": pd.DataFrame(), "Lp": pd.DataFrame(), "Ln": pd.DataFrame()}
                 # for k,l in dataDCM.items():
                 #     exec(f"{k}=l")
@@ -150,21 +150,32 @@ for subdir, dirs, files in os.walk(path):
                 data3Dnewco1 = data3Dnewco.sort_values(by=1)
                 for k in range(datasize):
                     if data3Dnewco1.iloc[k, 0] > 0:
-                        if data3Dnewco1.iloc[k, 3] > Threshold1[counter1]:
+                        if data3Dnewco1.iloc[k, 3] > threshold:
                             dataDCM["Rp"] = dataDCM["Rp"].append(data3Dnewco1.iloc[k])
-                        elif data3Dnewco1.iloc[k, 3] < -Threshold1[counter1]:
+                        elif data3Dnewco1.iloc[k, 3] < -threshold:
                             dataDCM["Rn"] = dataDCM["Rn"].append(data3Dnewco1.iloc[k])
                     elif data3Dnewco1.iloc[k, 0] < 0:
-                        if data3Dnewco1.iloc[k, 3] > Threshold1[counter1]:
+                        if data3Dnewco1.iloc[k, 3] > threshold:
                             dataDCM["Lp"] = dataDCM["Lp"].append(data3Dnewco1.iloc[k])
-                        elif data3Dnewco1.iloc[k, 3] < -Threshold1[counter1]:
+                        elif data3Dnewco1.iloc[k, 3] < -threshold:
                             dataDCM["Ln"] = dataDCM["Ln"].append(data3Dnewco1.iloc[k])
                 # print(dataDCM)
 
-                # -------Build patch meshes--------#
+                dictDCM = {"Rp": {}, "Rn": {}, "Lp": {}, "Ln": {}}
+                centroid = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
                 ccmp = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
                 area = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+                normalx = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+                normaly = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+                normalz = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+
                 for i, j in dataDCM.items():
+                    # -------Create dictionary to look up deviations--------#
+                    tuplesDCM = list(dataDCM[i][[0, 1, 2]].itertuples(index=False, name=None))
+                    # dictDCM[i] = dataDCM[i].set_index([0, 1, 2]).T.to_dict('records')[0]
+                    dictDCM[i] = {tuplesDCM[k]: list(dataDCM[i]['STD'])[k] for k in range(len(tuplesDCM))}
+
+                    # -------Build patch meshes--------#
                     red = [1.0, 0.0, 0.0]
                     gray = [0.5, 0.5, 0.5]
 
@@ -207,7 +218,7 @@ for subdir, dirs, files in os.walk(path):
                     # -------Separate individual patches--------#
                     mesh_all = copy.deepcopy(meshDCM)
                     remove_idx = []
-                    for k in range(0, len(cluster_n_triangles)):
+                    for k in range(len(cluster_n_triangles)):
                         mesh_single = copy.deepcopy(mesh_all)
                         remove_rest = triangle_clusters != k
                         remove_idx.append(triangle_clusters == k)
@@ -216,11 +227,22 @@ for subdir, dirs, files in os.walk(path):
                         # o3.visualization.draw_geometries([mesh_single], mesh_show_wireframe=True,
                         #                                  mesh_show_back_face=True)
                         array_single = np.asarray(mesh_single.vertices).tolist()
+                        # patch centroids
+                        centroid[i].append(np.mean(array_single, axis=0))
+                        for l in range(len(array_single)):
+                            array_single[l].append(dictDCM[i][tuple(array_single[l])])
+                        # patch points + deviations
                         ccmp[i].append(array_single)
+                        # patch surface area
                         area[i].append(cluster_area[k])
                     remove_all = np.any(remove_idx, axis=0)
                     meshDCM.remove_triangles_by_mask(remove_all)
                     meshDCM.remove_unreferenced_vertices()
+
+                    # Normalize location of patch centroids
+                    normalx[i] = (np.asarray(centroid[i])[:, 0]/twidth).tolist()
+                    normaly[i] = (np.asarray(centroid[i])[:, 1]/theight).tolist()
+                    normalz[i] = (np.asarray(centroid[i])[:, 2]/tdepth).tolist()
 
             # Plot Output
             #plt.show()            
