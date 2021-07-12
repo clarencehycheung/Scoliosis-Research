@@ -27,55 +27,16 @@ for subdir, dirs, files in os.walk(path):
         if filepath.endswith("EDM-1.csv"):
             datafile = pd.read_csv(filepath, header=None)
             # Delete reference coordinate and deviation columns, keep test coordinate columns
-            data3D = datafile.drop(datafile.iloc[:, 3:], axis=1, inplace=False)
+            data3D0 = datafile.drop(datafile.iloc[:, 3:], axis=1, inplace=False)
             # Rename columns
-            data3D.rename(columns={0: 1, 1: 2, 2: 3}, inplace=True)
+            data3D0.rename(columns={0: 1, 1: 2, 2: 3}, inplace=True)
             # Find data dimensions
-            datadimensions = data3D.shape
+            datadimensions = data3D0.shape
             datasize = datadimensions[0]
             # Total deviation column data
             STDcol = datafile[9]
 
-            # ------------------Finding Height of Torso----------------------#
-            maxy = max(data3D[2])
-            miny = min(data3D[2])
-            theight = maxy - miny
-            # Plot with maxy and miny planes
-            # fig = plt.figure()
-            # ax = fig.add_subplot(4, 4, 1, projection='3d')
-            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.1)
-            # axis1 = np.linspace(-300, 300, 300)
-            # axis2 = np.linspace(-300, 300, 300)
-            # plane1, plane2 = np.meshgrid(axis1, axis2)
-            # ax.plot_surface(X=plane1, Y=float(maxy), Z=plane2, color='g', alpha=0.6)
-            # ax.plot_surface(X=plane1, Y=float(miny), Z=plane2, color='b', alpha=0.6)
-            
-            # ------------------Finding Width of Torso----------------------#
-            maxx = max(data3D[1])
-            minx = min(data3D[1])
-            twidth = maxx - minx
-            # Plot with maxx and minx planes
-            # ax = fig.add_subplot(4, 4, 2, projection='3d')
-            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.1)
-            # ax.plot_surface(X=float(maxx), Y=plane1, Z=plane2, color='g', alpha=0.6)
-            # ax.plot_surface(X=float(minx), Y=plane1, Z=plane2, color='b', alpha=0.6)
-            
-            # ------------------Finding Depth of Torso----------------------#
-            maxz = max(data3D[3])
-            minz = min(data3D[3])
-            tdepth = maxz - minz
-            # Plot with maxz, miny planes
-            #
-            #
-            # Plot with maxx, maxy, maxz, minx, miny, minz planes
-            # ax = fig.add_subplot(4, 4, 4, projection='3d')
-            # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.1)
-            # ax.plot_surface(X=plane1, Y=float(maxy), Z=plane2, color='g', alpha=0.2)
-            # ax.plot_surface(X=plane1, Y=float(miny), Z=plane2, color='b', alpha=0.2)
-            # ax.plot_surface(X=float(maxx), Y=plane1, Z=plane2, color='r', alpha=0.2)
-            # ax.plot_surface(X=float(minx), Y=plane1, Z=plane2, color='y', alpha=0.2)
             # ---------------Adjust alignment (aligns best plane of symmetry with the yz-plane)--------------------#
-            data3D0=data3D
 
             bfmatfile = open(subdir + os.sep + 'bfmat.tfm', 'r').read().split()[:12]
             bfmatfile = [float(i) for i in bfmatfile]
@@ -150,7 +111,7 @@ for subdir, dirs, files in os.walk(path):
             # ax = fig.add_subplot(4, 4, 5, projection='3d')
             # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.05)
             # ax.scatter(centerx, centery, centerz, color='r', alpha=1)
-           
+
             yzclosestpoint = data3D
             # Finds all points that x-values are 4 apart from mean
             yzclosestpoint = yzclosestpoint[yzclosestpoint[1] < (centerx + 4)]
@@ -162,7 +123,7 @@ for subdir, dirs, files in os.walk(path):
             # ax = fig.add_subplot(4, 4, 6, projection='3d')
             # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.05)
             # ax.scatter(B6[1], B6[2], B6[3], color='r', alpha=1)
-            
+
             # Finds the lowest point on the back
             B4 = B6[2].idxmin()
             B4 = B6.loc[[B4]]
@@ -179,29 +140,54 @@ for subdir, dirs, files in os.walk(path):
             Translate_matrix = np.array([[1, 0, 0, 0],
                                          [0, 1, 0, 0],
                                          [0, 0, 1, 0],
-                                         [float(-B4[1]), float(-B4[2]), float(-B4[3]), 1]])
+                                         [0, float(-B4[2]), float(-B4[3]), 1]])
             tpts = np.matmul(data3D_ones, Translate_matrix)[:, :-1]
-            
+
             # ---------------Add STD Column to data3D-----------------#
             data3Dnewco = pd.DataFrame(tpts)
             data3Dnewco['STD'] = STDcol
-            
+
             # ------------------Finding Height of Torso----------------------#
-            B7 = max(tpts[2])
-            B8 = min(tpts[2])
-            dis1 = B7 - B8
-            
+            maxy = max(tpts[2])
+            miny = min(tpts[2])
+            theight = maxy - miny
+            # Plot with maxy and miny planes
+            # fig = plt.figure()
+            # ax = fig.add_subplot(4, 4, 1, projection='3d')
+            # ax.scatter(tpts[1], tpts[2], tpts[3], c='tab:gray', alpha=0.1)
+            # axis1 = np.linspace(-300, 300, 300)
+            # axis2 = np.linspace(-300, 300, 300)
+            # plane1, plane2 = np.meshgrid(axis1, axis2)
+            # ax.plot_surface(X=plane1, Y=float(maxy), Z=plane2, color='g', alpha=0.6)
+            # ax.plot_surface(X=plane1, Y=float(miny), Z=plane2, color='b', alpha=0.6)
+
             # ------------------Finding Width of Torso----------------------#
-            B9 = max(tpts[1])
-            B10 = min(tpts[1])
-            dis3 = B9 - B10
-            
+            maxx = max(tpts[1])
+            minx = min(tpts[1])
+            twidth = maxx - minx
+            # Plot with maxx and minx planes
+            # ax = fig.add_subplot(4, 4, 2, projection='3d')
+            # ax.scatter(tpts[1], tpts[2], tpts[3], c='tab:gray', alpha=0.1)
+            # ax.plot_surface(X=float(maxx), Y=plane1, Z=plane2, color='g', alpha=0.6)
+            # ax.plot_surface(X=float(minx), Y=plane1, Z=plane2, color='b', alpha=0.6)
+
             # ------------------Finding Depth of Torso----------------------#
-            B11 = max(tpts[3])
-            B12 = min(tpts[3])
-            dis5 = B11 - B12
+            maxz = max(tpts[3])
+            minz = min(tpts[3])
+            tdepth = maxz - minz
+            # Plot with maxz, miny planes
+            #
+            #
+            # Plot with maxx, maxy, maxz, minx, miny, minz planes
+            # ax = fig.add_subplot(4, 4, 4, projection='3d')
+            # ax.scatter(tpts[1], tpts[2], tpts[3], c='tab:gray', alpha=0.1)
+            # ax.plot_surface(X=plane1, Y=float(maxy), Z=plane2, color='g', alpha=0.2)
+            # ax.plot_surface(X=plane1, Y=float(miny), Z=plane2, color='b', alpha=0.2)
+            # ax.plot_surface(X=float(maxx), Y=plane1, Z=plane2, color='r', alpha=0.2)
+            # ax.plot_surface(X=float(minx), Y=plane1, Z=plane2, color='y', alpha=0.2)
 
             # -------Separate positive and negative patches on left and right side--------#
+
             for threshold in Threshold1:
                 dataDCM = {"Rp": pd.DataFrame(), "Rn": pd.DataFrame(), "Lp": pd.DataFrame(), "Ln": pd.DataFrame()}
                 # for k,l in dataDCM.items():
@@ -230,7 +216,7 @@ for subdir, dirs, files in os.walk(path):
                 normalz = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
 
                 for i, j in dataDCM.items():
-                    # -------Create dictionary to look up deviations--------#
+                    # Create dictionary to look up deviations
                     tuplesDCM = list(dataDCM[i][[0, 1, 2]].itertuples(index=False, name=None))
                     # dictDCM[i] = dataDCM[i].set_index([0, 1, 2]).T.to_dict('records')[0]
                     dictDCM[i] = {tuplesDCM[k]: list(dataDCM[i]['STD'])[k] for k in range(len(tuplesDCM))}
@@ -264,7 +250,7 @@ for subdir, dirs, files in os.walk(path):
                     cluster_n_triangles0 = np.asarray(cluster_n_triangles0)
                     cluster_area0 = np.asarray(cluster_area0)
 
-                    # -------Filtering small patches--------#
+                    # Filtering small patches
                     triangles_small_n = cluster_n_triangles0[triangle_clusters0] < 10
                     meshDCM.remove_triangles_by_mask(triangles_small_n)
                     o3.visualization.draw_geometries([meshDCM], mesh_show_wireframe=True, mesh_show_back_face=True)
@@ -278,7 +264,7 @@ for subdir, dirs, files in os.walk(path):
                     # -------Separate individual patches--------#
                     mesh_all = copy.deepcopy(meshDCM)
                     remove_idx = []
-                    for k in range(len(cluster_n_triangles)):
+                    for k, surface_area in enumerate(cluster_area):
                         mesh_single = copy.deepcopy(mesh_all)
                         remove_rest = triangle_clusters != k
                         remove_idx.append(triangle_clusters == k)
@@ -289,20 +275,20 @@ for subdir, dirs, files in os.walk(path):
                         array_single = np.asarray(mesh_single.vertices).tolist()
                         # patch centroids
                         centroid[i].append(np.mean(array_single, axis=0))
-                        for l in range(len(array_single)):
-                            array_single[l].append(dictDCM[i][tuple(array_single[l])])
+                        for point in array_single:
+                            point.append(dictDCM[i][tuple(point)])
                         # patch points + deviations
                         ccmp[i].append(array_single)
                         # patch surface area
-                        area[i].append(cluster_area[k])
+                        area[i].append(surface_area)
                     remove_all = np.any(remove_idx, axis=0)
                     meshDCM.remove_triangles_by_mask(remove_all)
                     meshDCM.remove_unreferenced_vertices()
 
                     # Normalize location of patch centroids
-                    normalx[i] = (np.asarray(centroid[i])[:, 0]/twidth).tolist()
-                    normaly[i] = (np.asarray(centroid[i])[:, 1]/theight).tolist()
-                    normalz[i] = (np.asarray(centroid[i])[:, 2]/tdepth).tolist()
+                    normalx[i] = (np.asarray(centroid[i])[:, 0] / twidth).tolist()
+                    normaly[i] = (np.asarray(centroid[i])[:, 1] / theight).tolist()
+                    normalz[i] = (np.asarray(centroid[i])[:, 2] / tdepth).tolist()
 
             # Plot Output
-            #plt.show()            
+            # plt.show()
