@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from tkinter.filedialog import askdirectory
 import os
+import scipy.io
+from scipy.optimize import minimize
 from sympy import Point3D, Plane
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
@@ -33,10 +35,6 @@ for subdir, dirs, files in os.walk(path):
             datasize = datadimensions[0]
             # Total deviation column data
             STDcol = datafile[9]
-            # Rotate points for Brazil data
-            data3D = data3D.reindex(columns=[1, 3, 2])
-            data3D = data3D.rename(columns={1: 1, 3: 2, 2: 3}, inplace=False)
-            data3D[1] = -1*data3D[1]
 
             # ------------------Finding Height of Torso----------------------#
             maxy = max(data3D[2])
@@ -76,8 +74,70 @@ for subdir, dirs, files in os.walk(path):
             # ax.plot_surface(X=plane1, Y=float(miny), Z=plane2, color='b', alpha=0.2)
             # ax.plot_surface(X=float(maxx), Y=plane1, Z=plane2, color='r', alpha=0.2)
             # ax.plot_surface(X=float(minx), Y=plane1, Z=plane2, color='y', alpha=0.2)
+            # ---------------Adjust alignment (aligns best plane of symmetry with the yz-plane)--------------------#
+            data3D0=data3D
 
-            # ------------------Adjust Torso Alignment----------------------#
+            bfmatfile = open(subdir + os.sep + 'bfmat.tfm', 'r').read().split()[:12]
+            bfmatfile = [float(i) for i in bfmatfile]
+            bfmat = np.reshape(np.array(bfmatfile), [3, 4])
+            Q = bfmat[:, :3]
+            c = bfmat[:, 3]
+            # Fixed point on plane
+            x = np.matmul(np.linalg.inv(np.identity(3) - Q), c)
+
+
+            # define square error function
+            def optimize_transform(r):
+                p1 = r[0]
+                p2 = r[1]
+                p3 = r[2]
+                th = r[3]
+                Qq = np.array([[-p1 ** 2 * (1 + np.cos(th)) + np.cos(th), -p1 * p2 * (1 + np.cos(th)) + p3 * np.sin(th),
+                                -p1 * p3 * (1 + np.cos(th)) - p2 * np.sin(th)],
+                               [-p1 * p2 * (1 + np.cos(th)) - p3 * np.sin(th), -p2 ** 2 * (1 + np.cos(th)) + np.cos(th),
+                                -p2 * p3 * (1 + np.cos(th)) + p1 * np.sin(th)],
+                               [-p1 * p3 * (1 + np.cos(th)) + p2 * np.sin(th),
+                                -p2 * p3 * (1 + np.cos(th)) - p1 * np.sin(th),
+                                -p3 ** 2 * (1 + np.cos(th)) + np.cos(th)]])
+                square_error = 0
+                for m, n in np.nditer([Qq, Q]):
+                    square_error += (m - n) ** 2
+                return square_error
+
+
+            # Best plane of symmetry
+            result_opt = minimize(optimize_transform, [-1, 0, 0, 0])
+            # Normal vector to plane
+            p = result_opt.x[0:3]
+            if p[0] > 0:
+                p = -p
+
+            # Transformation matrix
+            u = np.array([-1, 0, 0])
+            v = np.cross(p, u)
+            T_cos = np.dot(p, u)
+            v_skew = np.array([[0, -v[2], v[1]],
+                               [v[2], 0, -v[0]],
+                               [-v[1], v[0], 0]])
+            R = np.identity(3) + v_skew + np.linalg.matrix_power(v_skew, 2) / (1 + T_cos)  # rotation matrix
+            B = [0, 0, (p[0] * x[0] + p[1] * x[1]) / p[2] + x[2]]  # vertical axis intercept
+            t = B - np.matmul(R, B)  # translation vector
+            R_t = np.append(R, t.reshape(-1, 1), axis=1)
+            T = np.zeros((4, 4))
+            T[3, 3] = 1
+            T[:-1, :] = R_t
+
+            # Apply transformation
+            dat = data3D0.transpose()
+            dat = np.append(dat, np.ones((1, dat.shape[1])), axis=0)
+            dat = np.matmul(T, dat)
+            data3D = dat[0:3].transpose()
+
+            # ------------------Rotate points for brazil data----------------------#
+            data3D = pd.DataFrame(data3D, columns=[1, 2, 3])
+            data3D = data3D.reindex(columns=[1, 3, 2])
+            data3D.rename(columns={1: 1, 3: 2, 2: 3}, inplace=True)
+            data3D[1] = -1 * data3D[1]
 
             # ---------------Finding Back Point of the Torso-----------------#
             # Finding mean x value
