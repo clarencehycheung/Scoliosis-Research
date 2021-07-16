@@ -346,3 +346,5 @@ for subdir, dirs, files in os.walk(path):
                 if NormalyLn[i] > patchlimitLy and (NormalyLn[i] < patchlimitSy or (NormalyLn[i] < patchlimitUy and create_plane(SnormL, twidth, theight, NormalxLn[i], NormalyLn[i]) < 0)):
                     ccmpLp2.append(ccmpLp[i])
             # Add action
+            
+            #Remark: Some of the variable names will have errors when opened in an IDE. I couldn't find the name of these specific variables sorry :(
