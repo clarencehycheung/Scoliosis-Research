@@ -10,6 +10,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import open3d as o3
 import copy
+import math
 
 # -------------------------Set initial values------------------------------#
 Threshold1 = [3, 9.333]
@@ -38,7 +39,6 @@ for subdir, dirs, files in os.walk(path):
 
             # ---------------Adjust alignment (aligns best plane of symmetry with the yz-plane)--------------------#
 
-            bfmatfile = open(subdir + os.sep + 'bfmat.tfm', 'r').read().split()[:12]
             bfmatfile = [float(i) for i in bfmatfile]
             bfmat = np.reshape(np.array(bfmatfile), [3, 4])
             Q = bfmat[:, :3]
@@ -224,7 +224,7 @@ for subdir, dirs, files in os.walk(path):
                     # Create dictionary to look up deviations
                     tuplesDCM = list(dataDCM[i][[0, 1, 2]].itertuples(index=False, name=None))
                     # dictDCM[i] = dataDCM[i].set_index([0, 1, 2]).T.to_dict('records')[0]
-                    dictDCM[i] = {tuplesDCM[k]: list(dataDCM[i]['STD'])[k] for k in range(len(tuplesDCM))}
+                    dictDCM[i] = {tup: list(dataDCM[i]['STD'])[k] for k, tup in enumerate(tuplesDCM)}
 
                     # -------Build patch meshes--------#
                     red = [1.0, 0.0, 0.0]
@@ -299,6 +299,9 @@ for subdir, dirs, files in os.walk(path):
             # plt.show()
             
             # -------Filter false patches at waist, neck, and shoulders--------#
+            # IW: please consider using dictionaries as in the above code and including in the loop
+            # IW: please review the existing code and note how the variables are storing the datasets
+            # IW: for example - ccmpRp is stored as ccmp['Rp'], NormalyRp is stored as normaly['Rp']
             patchlimitLy = 0.05
             patchlimitUy = 0.88
 
@@ -310,15 +313,17 @@ for subdir, dirs, files in os.walk(path):
             # R
             SnormR = [math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
             SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(90 + math.radians(Splaneangle))]
+            # IW: should this be "SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]"?
 
             # L
             SnormL = [(-1) * math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
             SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(90 + math.radians(Splaneangle))]
+            # IW: should this be "SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]"?
 
             # --- Positive Patches ---#
 
             # R
-            ccmpRp2 = [];
+            ccmpRp2 = []; # IW: what is semicolon for?
             for i in range(len(ccmpRp)):
                 if NormalyRp[i] > patchlimitLy and (NormalyRp[i] < patchlimitSy or (NormalyRp[i] < patchlimitUy and createPlane(SnormR, twidth, theight, NormalxRp[i], NormalyRp[i]) < 0)):
                     ccmpRp2.append(ccmpRp[i])
