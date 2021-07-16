@@ -65,7 +65,12 @@ for subdir, dirs, files in os.walk(path):
                     square_error += (m - n) ** 2
                 return square_error
 
-
+            # function to create a plane
+            def create_plane(normalvector, twidth, theight, x, y):
+                patchlimitsy = 0.67
+                patchlimitsx = 0.35
+                return twidth * normalvector[0] * (x - patchlimitsx) + theight * normalvector[1] * (y - patchlimitsy)
+            
             # Best plane of symmetry
             result_opt = minimize(optimize_transform, [-1, 0, 0, 0])
             # Normal vector to plane
@@ -292,3 +297,52 @@ for subdir, dirs, files in os.walk(path):
 
             # Plot Output
             # plt.show()
+            
+            # -------Filter false patches at waist, neck, and shoulders--------#
+            patchlimitLy = 0.05
+            patchlimitUy = 0.88
+
+            patchlimitSy = 0.67
+            patchlimitSx = 0.35
+
+            Splaneangle = 20
+
+            # R
+            SnormR = [math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
+            SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(90 + math.radians(Splaneangle))]
+
+            # L
+            SnormL = [(-1) * math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
+            SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(90 + math.radians(Splaneangle))]
+
+            # --- Positive Patches ---#
+
+            # R
+            ccmpRp2 = [];
+            for i in range(len(ccmpRp)):
+                if NormalyRp[i] > patchlimitLy and (NormalyRp[i] < patchlimitSy or (NormalyRp[i] < patchlimitUy and createPlane(SnormR, twidth, theight, NormalxRp[i], NormalyRp[i]) < 0)):
+                    ccmpRp2.append(ccmpRp[i])
+            # Add action
+
+            # L
+            ccmpLp2 = [];
+            for i in range(len(ccmpLp)):
+                if NormalyLp[i] > patchlimitLy and (NormalyLp[i] < patchlimitSy or (NormalyLp[i] < patchlimitUy and createPlane(SnormL, twidth, theight, NormalxLp[i], NormalyLp[i]) < 0)):
+                    ccmpLp2.append(ccmpLp[i])
+            # Add action
+
+            # --- Negative Patches ---#
+
+            # R
+            ccmpRn2 = [];
+            for i in range(len(ccmpRn)):
+                if NormalyRn[i] > patchlimitLy and (NormalyRn[i] < patchlimitSy or (NormalyRn[i] < patchlimitUy and create_plane(SnormR, twidth, theight, NormalxRn[i], NormalyRn[i]) < 0)):
+                    ccmpRn2.append(ccmpRn[i])
+            #Add action
+
+            # L
+            ccmpLn2 = [];
+            for i in range(len(ccmpLn)):
+                if NormalyLn[i] > patchlimitLy and (NormalyLn[i] < patchlimitSy or (NormalyLn[i] < patchlimitUy and create_plane(SnormL, twidth, theight, NormalxLn[i], NormalyLn[i]) < 0)):
+                    ccmpLp2.append(ccmpLp[i])
+            # Add action
