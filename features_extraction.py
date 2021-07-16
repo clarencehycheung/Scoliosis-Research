@@ -39,6 +39,7 @@ for subdir, dirs, files in os.walk(path):
 
             # ---------------Adjust alignment (aligns best plane of symmetry with the yz-plane)--------------------#
 
+            bfmatfile = open(subdir + os.sep + 'bfmat.tfm', 'r').read().split()[:12] # read best fit alignment transformation matrix
             bfmatfile = [float(i) for i in bfmatfile]
             bfmat = np.reshape(np.array(bfmatfile), [3, 4])
             Q = bfmat[:, :3]
