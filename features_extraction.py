@@ -354,3 +354,29 @@ for subdir, dirs, files in os.walk(path):
             # Add action
             
             #Remark: Some of the variable names will have errors when opened in an IDE. I couldn't find the name of these specific variables sorry :(
+            
+            # ---------------------Transferring to Excel----------------------------#
+
+            Firstrow = ["RMS+", "MaxDev+", "Area+", "Normalx+", "Normaly+", "Normalz+",
+                               "Location+", "RMS-", "MaxDev-", "Area-", "Normalx-", "Normaly-",
+                               "Normalz-", "Location-"]
+            Rownu1 = [max(len(RMSRp)), max(len(MaxDevRp)), max(len(AreaofeachTorsoRp)), max(len(NormalxRp2)),
+                      max(len(NormalyRp2)), max(len(NormalzRp2)), max(len(TorsoRp)), max(len(RMSRn)),
+                      max(len(MaxDevRn)), max(len(AreaofeachTorsoRn)), max(len(NormalxRn2)), max(len(NormalyRn2)),
+                      max(len(NormalzRn2)), max(len(TorsoRn))]
+            Colnu = len(Firstrow)
+            resultsR = [RMSRp, MaxDevRp, AreaofeachTorsoRp, NormalxRp2, NormalyRp2, NormalzRp2, TorsoRp, RMSRn,
+                        MaxDevRn, AreaofeachTorsoRn, NormalxRn2, NormalyRn2, NormalzRn2, TorsoRn]
+            # Transpose and PadRight resultsR (not done)
+            Rownu2 = [max(len(RMSLp)), max(len(MaxDevLp)), max(len(AreaofeachTorsoLp)), max(len(NormalxLp2)),
+                      max(len(NormalyLp2)), max(len(NormalzLp2)), max(len(TorsoLp)), max(len(RMSLn)),
+                      max(len(MaxDevLn)), max(len(AreaofeachTorsoLn)), max(len(NormalxLn2)), max(len(NormalyLn2)),
+                      max(len(NormalzLn2)), max(len(TorsoLn))]
+            resultsL = [RMSLp, MaxDevLp, AreaofeachTorsoLp, NormalxLp2, NormalyLp2, NormalzLp2, TorsoLp, RMSLn,
+                        MaxDevLn, AreaofeachTorsoLn, NormalxLn2, NormalyLn2, NormalzLn2, TorsoLn]
+            # Transpose and PadRight resultsL (not done)
+            tableR = pd.DataFrame(resultsR)
+            tableR.columns = Firstrow
+            tableL = pd.DataFrame(resultsL)
+            tableL.columns = Firstrow
+            # df.to_excel(r'C:\Users\...\Desktop\export_dataframe.xlsx', index=False, header=True)
