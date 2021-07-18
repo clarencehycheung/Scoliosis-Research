@@ -303,6 +303,8 @@ for subdir, dirs, files in os.walk(path):
             # IW: please consider using dictionaries as in the above code and including in the loop
             # IW: please review the existing code and note how the variables are storing the datasets
             # IW: for example - ccmpRp is stored as ccmp['Rp'], NormalyRp is stored as normaly['Rp']
+            # -JW: Will work on this
+            
             patchlimitLy = 0.05
             patchlimitUy = 0.88
 
@@ -313,18 +315,18 @@ for subdir, dirs, files in os.walk(path):
 
             # R
             SnormR = [math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
-            SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(90 + math.radians(Splaneangle))]
-            # IW: should this be "SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]"?
+            SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
+            # IW: should this be "SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]"?, -JW Fixed
 
             # L
             SnormL = [(-1) * math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
-            SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(90 + math.radians(Splaneangle))]
-            # IW: should this be "SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]"?
+            SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
+            # IW: should this be "SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]"? -JW Fixed
 
             # --- Positive Patches ---#
 
             # R
-            ccmpRp2 = []; # IW: what is semicolon for?
+            ccmpRp2 = [] # IW: what is semicolon for? -JW Fixed
             for i in range(len(ccmpRp)):
                 if NormalyRp[i] > patchlimitLy and (NormalyRp[i] < patchlimitSy or (NormalyRp[i] < patchlimitUy and createPlane(SnormR, twidth, theight, NormalxRp[i], NormalyRp[i]) < 0)):
                     ccmpRp2.append(ccmpRp[i])
