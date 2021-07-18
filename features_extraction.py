@@ -360,7 +360,7 @@ for subdir, dirs, files in os.walk(path):
             Firstrow = ["RMS+", "MaxDev+", "Area+", "Normalx+", "Normaly+", "Normalz+",
                         "Location+", "RMS-", "MaxDev-", "Area-", "Normalx-", "Normaly-",
                          "Normalz-", "Location-"]
-            # Finding the max length for the rows        
+            # Finding the max length for the rows      
             Rownu1 = max([len(RMSRp), len(MaxDevRp), len(AreaofeachTorsoRp), len(NormalxRp2),
                           len(NormalyRp2), len(NormalzRp2), len(TorsoRp), len(RMSRn),
                           len(MaxDevRn), len(AreaofeachTorsoRn), len(NormalxRn2), len(NormalyRn2),
@@ -383,5 +383,12 @@ for subdir, dirs, files in os.walk(path):
             tableL = pd.DataFrame(resultsL, index=Firstrow)
             # replace empty strings with 'P' /// not done
             tableL = tableL.T
+            # Find the folder that program is in for naming .csv files
+            foldernum = subdir.split('\\')
+            # create .csv files
+#             tableR.to_csv(path + '\Features-Right-' + foldernum[1] +'3mm.csv', index=False)
+#             tableR.to_csv(path + '\Features-Right-' + foldernum[1] + '9.33mm.csv', index=False)
+#             tableL.to_csv(path + '\Features-Left-' + foldernum[1] +'3mm.csv', index=False)
+#             tableL.to_csv(path + '\Features-Left-' + foldernum[1] + '9.33mm.csv', index=False)
 
-            # df.to_excel(r'C:\Users\...\Desktop\export_dataframe.xlsx', index=False, header=True)
+          
