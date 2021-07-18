@@ -356,27 +356,32 @@ for subdir, dirs, files in os.walk(path):
             #Remark: Some of the variable names will have errors when opened in an IDE. I couldn't find the name of these specific variables sorry :(
             
             # ---------------------Transferring to Excel----------------------------#
-
+            # Creating names for the indices
             Firstrow = ["RMS+", "MaxDev+", "Area+", "Normalx+", "Normaly+", "Normalz+",
-                               "Location+", "RMS-", "MaxDev-", "Area-", "Normalx-", "Normaly-",
-                               "Normalz-", "Location-"]
-            Rownu1 = [max(len(RMSRp)), max(len(MaxDevRp)), max(len(AreaofeachTorsoRp)), max(len(NormalxRp2)),
-                      max(len(NormalyRp2)), max(len(NormalzRp2)), max(len(TorsoRp)), max(len(RMSRn)),
-                      max(len(MaxDevRn)), max(len(AreaofeachTorsoRn)), max(len(NormalxRn2)), max(len(NormalyRn2)),
-                      max(len(NormalzRn2)), max(len(TorsoRn))]
+                        "Location+", "RMS-", "MaxDev-", "Area-", "Normalx-", "Normaly-",
+                         "Normalz-", "Location-"]
+            # Finding the max length for the rows        
+            Rownu1 = max([len(RMSRp), len(MaxDevRp), len(AreaofeachTorsoRp), len(NormalxRp2),
+                          len(NormalyRp2), len(NormalzRp2), len(TorsoRp), len(RMSRn),
+                          len(MaxDevRn), len(AreaofeachTorsoRn), len(NormalxRn2), len(NormalyRn2),
+                          len(NormalzRn2), len(TorsoRn)])
+            # Finding max columns
             Colnu = len(Firstrow)
+            # Create array
             resultsR = [RMSRp, MaxDevRp, AreaofeachTorsoRp, NormalxRp2, NormalyRp2, NormalzRp2, TorsoRp, RMSRn,
                         MaxDevRn, AreaofeachTorsoRn, NormalxRn2, NormalyRn2, NormalzRn2, TorsoRn]
-            # Transpose and PadRight resultsR (not done)
-            Rownu2 = [max(len(RMSLp)), max(len(MaxDevLp)), max(len(AreaofeachTorsoLp)), max(len(NormalxLp2)),
-                      max(len(NormalyLp2)), max(len(NormalzLp2)), max(len(TorsoLp)), max(len(RMSLn)),
-                      max(len(MaxDevLn)), max(len(AreaofeachTorsoLn)), max(len(NormalxLn2)), max(len(NormalyLn2)),
-                      max(len(NormalzLn2)), max(len(TorsoLn))]
+            Rownu2 = max([len(RMSLp), len(MaxDevLp), len(AreaofeachTorsoLp), len(NormalxLp2),
+                          len(NormalyLp2), len(NormalzLp2), len(TorsoLp), len(RMSLn),
+                          len(MaxDevLn), len(AreaofeachTorsoLn), len(NormalxLn2), len(NormalyLn2),
+                          len(NormalzLn2), len(TorsoLn)])
             resultsL = [RMSLp, MaxDevLp, AreaofeachTorsoLp, NormalxLp2, NormalyLp2, NormalzLp2, TorsoLp, RMSLn,
                         MaxDevLn, AreaofeachTorsoLn, NormalxLn2, NormalyLn2, NormalzLn2, TorsoLn]
-            # Transpose and PadRight resultsL (not done)
-            tableR = pd.DataFrame(resultsR)
-            tableR.columns = Firstrow
-            tableL = pd.DataFrame(resultsL)
-            tableL.columns = Firstrow
+            # Create DataFrame and Transpose
+            tableR = pd.DataFrame(resultsR, index=Firstrow)
+            # replace empty strings with 'P' /// not done
+            tableR = tableR.T
+            tableL = pd.DataFrame(resultsL, index=Firstrow)
+            # replace empty strings with 'P' /// not done
+            tableL = tableL.T
+
             # df.to_excel(r'C:\Users\...\Desktop\export_dataframe.xlsx', index=False, header=True)
