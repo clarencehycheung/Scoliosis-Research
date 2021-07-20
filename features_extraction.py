@@ -13,7 +13,7 @@ import copy
 import math
 
 # -------------------------Set initial values------------------------------#
-Threshold1 = [3, 9.333]
+Threshold1 = [3, 9.33]
 initial = 1
 initial1 = 1
 numberofthre = len(Threshold1)
@@ -46,7 +46,6 @@ for subdir, dirs, files in os.walk(path):
             c = bfmat[:, 3]
             # Fixed point on plane
             x = np.matmul(np.linalg.inv(np.identity(3) - Q), c)
-
 
             # define square error function
             def optimize_transform(r):
@@ -214,24 +213,24 @@ for subdir, dirs, files in os.walk(path):
                 # print(dataDCM)
 
                 dictDCM = {"Rp": {}, "Rn": {}, "Lp": {}, "Ln": {}}
-                centroid = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
-                ccmp = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
-                area = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
-                normalx = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
-                normaly = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
-                normalz = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+                centroid = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for trcentrRp, trcentrLp, ...
+                ccmp = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for ccmpRp, ccmpLp, ...
+                area = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for AreaofeachTorsoRp, AreaofTorsoLp, ... (before cropping)
+                normalx = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for NormalxRp, NormalxLp, ...
+                normaly = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for NormalyRp, NormalyLp, ...
+                normalz = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for NormalzRp, NormalzLp, ...
 
-                for i, j in dataDCM.items():
+                for i, DCM in dataDCM.items():
                     # Create dictionary to look up deviations
-                    tuplesDCM = list(dataDCM[i][[0, 1, 2]].itertuples(index=False, name=None))
-                    # dictDCM[i] = dataDCM[i].set_index([0, 1, 2]).T.to_dict('records')[0]
-                    dictDCM[i] = {tup: list(dataDCM[i]['STD'])[k] for k, tup in enumerate(tuplesDCM)}
+                    tuplesDCM = list(DCM[[0, 1, 2]].itertuples(index=False, name=None))
+                    # dictDCM[i] = DCM.set_index([0, 1, 2]).T.to_dict('records')[0]
+                    dictDCM[i] = {tup: list(DCM['STD'])[k] for k, tup in enumerate(tuplesDCM)}
 
                     # -------Build patch meshes--------#
                     red = [1.0, 0.0, 0.0]
                     gray = [0.5, 0.5, 0.5]
 
-                    arrayDCM = dataDCM[i].iloc[:, 0:3].to_numpy()
+                    arrayDCM = DCM.iloc[:, 0:3].to_numpy()
                     cloudDCM = o3.geometry.PointCloud()
                     cloudDCM.points = o3.utility.Vector3dVector(arrayDCM)
                     cloudDCM.estimate_normals()
@@ -299,23 +298,30 @@ for subdir, dirs, files in os.walk(path):
             # Plot Output
             # plt.show()
             
-            # -------Filter false patches at waist, neck, and shoulders--------#
+                    # -------Filter false patches at waist, neck, and shoulders--------#
 
-            patchlimitLy = 0.05
-            patchlimitUy = 0.88
+                    patchlimitLy = 0.05
+                    patchlimitUy = 0.88
 
-            patchlimitSy = 0.67
-            patchlimitSx = 0.35
+                    patchlimitSy = 0.67
+                    patchlimitSx = 0.35
 
-            Splaneangle = 20
+                    Splaneangle = 20
 
-            # R
-            SnormR = [math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
-            SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
+                    # R
+                    SnormR = [math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
+                    SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
 
-            # L
-            SnormL = [(-1) * math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
-            SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
+                    # L
+                    SnormL = [(-1) * math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
+                    SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
+
+                    # maybe try something like....
+
+                    # ccmp2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+                    # for j, patch in enumerate(ccmp[i]):
+                    #     if normalx[i][j] ...........
+                    #         ccmp2[i].append(patch)
 
             # --- Positive Patches ---#
 
@@ -354,6 +360,8 @@ for subdir, dirs, files in os.walk(path):
             # Add action
             
             # ---------------------Transferring to Excel----------------------------#
+            # IW: Not sure if all these variables are necessary, you can remove any that aren't actually needed
+            # IW: Again, keep in mind how the data is stored differently than in Mathematica, see lines 216-221 for example
             # Creating names for the indices
             Firstrow = ["RMS+", "MaxDev+", "Area+", "Normalx+", "Normaly+", "Normalz+",
                         "Location+", "RMS-", "MaxDev-", "Area-", "Normalx-", "Normaly-",
