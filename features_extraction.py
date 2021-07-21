@@ -295,69 +295,38 @@ for subdir, dirs, files in os.walk(path):
                     normaly[i] = (np.asarray(centroid[i])[:, 1] / theight).tolist()
                     normalz[i] = (np.asarray(centroid[i])[:, 2] / tdepth).tolist()
 
-            # Plot Output
-            # plt.show()
-            
+                    # Plot Output
+                    # plt.show()
+
                     # -------Filter false patches at waist, neck, and shoulders--------#
 
-                    patchlimitLy = 0.05
-                    patchlimitUy = 0.88
+                            patchlimitLy = 0.05
+                            patchlimitUy = 0.88
 
-                    patchlimitSy = 0.67
-                    patchlimitSx = 0.35
+                            patchlimitSy = 0.67
+                            patchlimitSx = 0.35
 
-                    Splaneangle = 20
+                            Splaneangle = 20
 
-                    # R
-                    SnormR = [math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
-                    SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
+                            # R
+                            SnormR = [math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
+                            SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
 
-                    # L
-                    SnormL = [(-1) * math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
-                    SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
+                            # L
+                            SnormL = [(-1) * math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
+                            SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
 
-                    # maybe try something like....
+                            ccmp2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+                            types = ["Rp", "Rn", "Lp", "Ln"]
 
-                    # ccmp2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
-                    # for j, patch in enumerate(ccmp[i]):
-                    #     if normalx[i][j] ...........
-                    #         ccmp2[i].append(patch)
-
-            # --- Positive Patches ---#
-
-            # R
-            ccmpRp2 = []
-            for i in range(len(ccmp["Rp"])):
-                for j in range(len(normaly["Rp"])):
-                    if normaly["Rp"][j] > patchlimitLy and (normaly["Rp"][j] < patchlimitSy or (normaly["Rp"][j] < patchlimitUy and create_plane(SnormR, twidth, theight, normalx["Rp"][j],normaly["Rp"][j]) < 0)):
-                        ccmpRp2.append(ccmp["Rp"][i])
-            # Add action
-
-            # L
-            ccmpLp2 = []
-            for i in range(len(ccmp["Lp"])):
-                for j in range(len(normaly["Lp"])):
-                    if normaly["Lp"][j] > patchlimitLy and (normaly["Lp"][j] < patchlimitSy or (normaly["Lp"][j] < patchlimitUy and create_plane(SnormL, twidth, theight, normalx["Lp"][j],normaly["Lp"][j]) < 0)):
-                        ccmpLp2.append(ccmp["Lp"][i])
-            # Add action
-
-            # --- Negative Patches ---#
-
-            # R
-            ccmpRn2 = []
-            for i in range(len(ccmp["Rn"])):
-                for j in range(len(normaly["Rn"])):
-                    if normaly["Rn"][j] > patchlimitLy and (normaly["Rn"][j] < patchlimitSy or (normaly["Rn"][j] < patchlimitUy and create_plane(SnormR, twidth, theight, normalx["Rn"][j],normaly["Rn"][j]) < 0)):
-                        ccmpRn2.append(ccmp["Rn"][i])
-            # Add action
-
-            # L
-            ccmpLn2 = []
-            for i in range(len(ccmp["Ln"])):
-                for j in range(len(normaly["Ln"])):
-                    if normaly["Ln"][j] > patchlimitLy and (normaly["Ln"][j] < patchlimitSy or (normaly["Ln"][j] < patchlimitUy and create_plane(SnormL, twidth, theight, normalx["Ln"][j],normaly["Ln"][j]) < 0)):
-                        ccmpLp2.append(ccmp["Ln"][i])
-            # Add action
+                            for i in range(len(types)):
+                                for j in range(len(normaly[types[i]])):
+                                    if normaly[types[i]][j] > patchlimitLy and (normaly[types[i]][j] < patchlimitSy or (
+                                            normaly[types[i]][j] < patchlimitUy and create_plane(SnormR, twidth, theight,
+                                                                                                 normalx[types[i]][j],
+                                                                                                 normaly[types[i]][j]) < 0)):
+                                        ccmp2[types[i]].append(ccmp[types[i]][j])
+                                
             
             # ---------------------Transferring to Excel----------------------------#
             # IW: Not sure if all these variables are necessary, you can remove any that aren't actually needed
@@ -396,5 +365,3 @@ for subdir, dirs, files in os.walk(path):
 #             tableR.to_csv(path + '\Features-Right-' + foldernum[1] + '9.33mm.csv', index=False)
 #             tableL.to_csv(path + '\Features-Left-' + foldernum[1] +'3mm.csv', index=False)
 #             tableL.to_csv(path + '\Features-Left-' + foldernum[1] + '9.33mm.csv', index=False)
-
-          
