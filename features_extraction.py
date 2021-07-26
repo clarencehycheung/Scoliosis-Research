@@ -354,10 +354,10 @@ for subdir, dirs, files in os.walk(path):
                                 "Location+", "RMS-", "MaxDev-", "Area-", "Normalx-", "Normaly-",
                                  "Normalz-", "Location-"]
                     # Create array
-                    resultsR = [RMSRp, MaxDevRp, AreaofeachTorsoRp, normalx["Rp"], normaly["Rp"], normalz["Rp"], torso["Rp"], RMSRn,
-                                MaxDevRn, AreaofeachTorsoRn, normalx["Rn"], normaly["Rn"], normalz["Rn"], torso["Rn"]]
-                    resultsL = [RMSLp, MaxDevLp, AreaofeachTorsoLp, normalx["Lp"], normaly["Lp"], normalz["Lp"], torso["Lp"], RMSLn,
-                                MaxDevLn, AreaofeachTorsoLn, normalx["Ln"], normaly["Ln"], normalz["Ln"], torso["Ln"]]
+                    resultsR = [RMS["Rp"], MaxDev["Rp"], AreaofeachTorso["Rp"], normalx["Rp"], normaly["Rp"], normalz["Rp"], torso["Rp"], RMS["Rn"],
+                                MaxDev["Rn"], AreaofeachTorso["Rn"], normalx["Rn"], normaly["Rn"], normalz["Rn"], torso["Rn"]]
+                    resultsL = [RMS["Lp"], MaxDev["Lp"], AreaofeachTorso["Lp"], normalx["Lp"], normaly["Lp"], normalz["Lp"], torso["Lp"], RMS["Ln"],
+                                MaxDev["Ln"], AreaofeachTorso["Ln"], normalx["Ln"], normaly["Ln"], normalz["Ln"], torso["Ln"]]
                     # Create DataFrame and Transpose
                     tableR = pd.DataFrame(resultsR, index=Firstrow)
                     # replace empty strings with 'P' /// not done
