@@ -339,13 +339,21 @@ for subdir, dirs, files in os.walk(path):
                     AreaofeachTorso["Lp"] = len(ccmp2['Lp'])
                     
                 # -----------------------RMS of each positive Torso--------------------#
-                # -----------------------MaxDev of each positive Torso--------------------#   
+                # -----------------------MaxDev of each positive Torso--------------------#  
+                    def max1(data):
+                        # ...not done
+                    MaxDev["Rp"] = max1(ccmp2["Rp"])
+                    MaxDev["Lp"] = max1(ccmp2["Lp"])
                 # -----------------------Area of each Negative Torso--------------------#
                     AreaofeachTorso["Rn"] = len(ccmp2['Rn'])
                     AreaofeachTorso["Ln"] = len(ccmp2['Ln'])
                     
                 # -----------------------RMS of each Negative Torso--------------------#
                 # -----------------------MaxDev of each Negative Torso--------------------#
+                    def max2(data):
+                        # ...not done
+                    MaxDev["Rn"] = max2(ccmp2["Rn"])
+                    MaxDev["Ln"] = max2(ccmp2["Ln"])
                 # ---------------------Transferring to Excel----------------------------#
                 # IW: Not sure if all these variables are necessary, you can remove any that aren't actually needed
                 # IW: Again, keep in mind how the data is stored differently than in Mathematica, see lines 216-221 for example
