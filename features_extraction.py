@@ -335,14 +335,14 @@ for subdir, dirs, files in os.walk(path):
                                 
                 # -----------------------Area of each positive Torso--------------------#
                     # number of points
-                    AreaofeachTorsoRp = len(ccmp2['Rp'])
-                    AreaofeachTorsoLp = len(ccmp2['Lp'])
+                    AreaofeachTorso["Rp"] = len(ccmp2['Rp'])
+                    AreaofeachTorso["Lp"] = len(ccmp2['Lp'])
                     
                 # -----------------------RMS of each positive Torso--------------------#
                 # -----------------------MaxDev of each positive Torso--------------------#   
                 # -----------------------Area of each Negative Torso--------------------#
-                    AreaofeachTorsoRn = len(ccmp2['Rn'])
-                    AreaofeachTorsoLn = len(ccmp2['Ln'])
+                    AreaofeachTorso["Rn"] = len(ccmp2['Rn'])
+                    AreaofeachTorso["Ln"] = len(ccmp2['Ln'])
                     
                 # -----------------------RMS of each Negative Torso--------------------#
                 # -----------------------MaxDev of each Negative Torso--------------------#
