@@ -333,40 +333,40 @@ for subdir, dirs, files in os.walk(path):
                                 normaly2[types[i]].append((centroid2[types[i]])/theight)
                                 normaly2[types[i]].append((centroid2[types[i]])/tdepth)
                                 
-            # ---------------------Transferring to Excel----------------------------#
-            # IW: Not sure if all these variables are necessary, you can remove any that aren't actually needed
-            # IW: Again, keep in mind how the data is stored differently than in Mathematica, see lines 216-221 for example
-            # Creating names for the indices
-            Firstrow = ["RMS+", "MaxDev+", "Area+", "Normalx+", "Normaly+", "Normalz+",
-                        "Location+", "RMS-", "MaxDev-", "Area-", "Normalx-", "Normaly-",
-                         "Normalz-", "Location-"]
-            # Finding the max length for the rows      
-            Rownu1 = max([len(RMSRp), len(MaxDevRp), len(AreaofeachTorsoRp), len(NormalxRp2),
-                          len(NormalyRp2), len(NormalzRp2), len(TorsoRp), len(RMSRn),
-                          len(MaxDevRn), len(AreaofeachTorsoRn), len(NormalxRn2), len(NormalyRn2),
-                          len(NormalzRn2), len(TorsoRn)])
-            # Finding max columns
-            Colnu = len(Firstrow)
-            # Create array
-            resultsR = [RMSRp, MaxDevRp, AreaofeachTorsoRp, NormalxRp2, NormalyRp2, NormalzRp2, TorsoRp, RMSRn,
-                        MaxDevRn, AreaofeachTorsoRn, NormalxRn2, NormalyRn2, NormalzRn2, TorsoRn]
-            Rownu2 = max([len(RMSLp), len(MaxDevLp), len(AreaofeachTorsoLp), len(NormalxLp2),
-                          len(NormalyLp2), len(NormalzLp2), len(TorsoLp), len(RMSLn),
-                          len(MaxDevLn), len(AreaofeachTorsoLn), len(NormalxLn2), len(NormalyLn2),
-                          len(NormalzLn2), len(TorsoLn)])
-            resultsL = [RMSLp, MaxDevLp, AreaofeachTorsoLp, NormalxLp2, NormalyLp2, NormalzLp2, TorsoLp, RMSLn,
-                        MaxDevLn, AreaofeachTorsoLn, NormalxLn2, NormalyLn2, NormalzLn2, TorsoLn]
-            # Create DataFrame and Transpose
-            tableR = pd.DataFrame(resultsR, index=Firstrow)
-            # replace empty strings with 'P' /// not done
-            tableR = tableR.T
-            tableL = pd.DataFrame(resultsL, index=Firstrow)
-            # replace empty strings with 'P' /// not done
-            tableL = tableL.T
-            # Find the folder that program is in for naming .csv files
-            foldernum = subdir.split('\\')
-            # create .csv files
-#             tableR.to_csv(path + '\Features-Right-' + foldernum[1] +'3mm.csv', index=False)
-#             tableR.to_csv(path + '\Features-Right-' + foldernum[1] + '9.33mm.csv', index=False)
-#             tableL.to_csv(path + '\Features-Left-' + foldernum[1] +'3mm.csv', index=False)
-#             tableL.to_csv(path + '\Features-Left-' + foldernum[1] + '9.33mm.csv', index=False)
+                # -----------------------Area of each positive Torso--------------------#
+                    # number of points
+                    AreaofeachTorsoRp = len(ccmp2['Rp'])
+                    AreaofeachTorsoLp = len(ccmp2['Lp'])
+                    
+                # -----------------------RMS of each positive Torso--------------------#
+                # -----------------------MaxDev of each positive Torso--------------------#   
+                # -----------------------Area of each Negative Torso--------------------#
+                    AreaofeachTorsoRn = len(ccmp2['Rn'])
+                    AreaofeachTorsoLn = len(ccmp2['Ln'])
+                    
+                # -----------------------RMS of each Negative Torso--------------------#
+                # -----------------------MaxDev of each Negative Torso--------------------#
+                # ---------------------Transferring to Excel----------------------------#
+                # IW: Not sure if all these variables are necessary, you can remove any that aren't actually needed
+                # IW: Again, keep in mind how the data is stored differently than in Mathematica, see lines 216-221 for example
+                # Creating names for the indices
+                    Firstrow = ["RMS+", "MaxDev+", "Area+", "Normalx+", "Normaly+", "Normalz+",
+                                "Location+", "RMS-", "MaxDev-", "Area-", "Normalx-", "Normaly-",
+                                 "Normalz-", "Location-"]
+                    # Create array
+                    resultsR = [RMSRp, MaxDevRp, AreaofeachTorsoRp, normalx["Rp"], normaly["Rp"], normalz["Rp"], torso["Rp"], RMSRn,
+                                MaxDevRn, AreaofeachTorsoRn, normalx["Rn"], normaly["Rn"], normalz["Rn"], torso["Rn"]]
+                    resultsL = [RMSLp, MaxDevLp, AreaofeachTorsoLp, normalx["Lp"], normaly["Lp"], normalz["Lp"], torso["Lp"], RMSLn,
+                                MaxDevLn, AreaofeachTorsoLn, normalx["Ln"], normaly["Ln"], normalz["Ln"], torso["Ln"]]
+                    # Create DataFrame and Transpose
+                    tableR = pd.DataFrame(resultsR, index=Firstrow)
+                    # replace empty strings with 'P' /// not done
+                    tableR = tableR.T
+                    tableL = pd.DataFrame(resultsL, index=Firstrow)
+                    # replace empty strings with 'P' /// not done
+                    tableL = tableL.T
+                    # Find the folder that program is in for naming .csv files
+                    foldernum = subdir.split('\\')
+                    # create .csv files
+                    tableR.to_csv(path + '\Features-Right-' + foldernum[1] + threshold + 'mm.csv', index=False)
+                    tableL.to_csv(path + '\Features-Left-' + foldernum[1] + threshold + 'mm.csv', index=False)
