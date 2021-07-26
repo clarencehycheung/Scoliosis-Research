@@ -333,22 +333,95 @@ for subdir, dirs, files in os.walk(path):
                                 normaly2[types[i]].append((centroid2[types[i]])/theight)
                                 normaly2[types[i]].append((centroid2[types[i]])/tdepth)
                                 
-                # -----------------------Area of each positive Torso--------------------#
+                # -----------------------Area of each positive Torso--------------------# in progress
                     # number of points
-                    AreaofeachTorso["Rp"] = len(ccmp2['Rp'])
-                    AreaofeachTorso["Lp"] = len(ccmp2['Lp'])
+                    # point1 = []
+                    # AreaofeachTorsoRp = 0
+                    # for i in ccmp2["Rp"]:
+                    #     for s in i:
+                    #         AreaofeachTorsoRp = AreaofeachTorsoRp + 1
+                    #
+                    # AreaofeachTorsoLp = 0
+                    # for i in ccmp2['Lp']:
+                    #     for s in i:
+                    #         AreaofeachTorsoLp = AreaofeachTorsoLp + 1
                     
-                # -----------------------RMS of each positive Torso--------------------#
+                # -----------------------RMS of each positive Torso--------------------# in progess
+                    # squared1 = []
+                    # # squares all values in ccmp2["Rp"]
+                    # for i in ccmp2["Rp"]:
+                    #     for j in i:
+                    #         del j[0:3]
+                    #         squared1.append([s ** 2 for s in j])
+                    # 
+                    # empty1 = []
+                    # # sums numbers in each list
+                    # for numbers in squared1:
+                    #     number = sum(numbers)
+                    #     empty1.append(number)
+                    # sum1 = sum(empty1)
+                    # RMSRp = np.sqrt(sum1/len(empty1))
+                    # 
+                    # squared2 = []
+                    # # squares all values in ccmp2["Rp"]
+                    # for i in ccmp2["Lp"]:
+                    #     for j in i:
+                    #         del j[0:3]
+                    #         squared2.append([s ** 2 for s in j])
+                    # empty2 = []
+                    # # sums numbers in each list
+                    # for numbers in squared2:
+                    #     number = sum(numbers)
+                    #     empty2.append(number)
+                    # sum2 = sum(empty2)
+                    # RMSLp = np.sqrt(sum2/len(empty2))
+                
                 # -----------------------MaxDev of each positive Torso--------------------#  
                     def max1(data):
                         # ...not done
                     MaxDev["Rp"] = max1(ccmp2["Rp"])
                     MaxDev["Lp"] = max1(ccmp2["Lp"])
-                # -----------------------Area of each Negative Torso--------------------#
-                    AreaofeachTorso["Rn"] = len(ccmp2['Rn'])
-                    AreaofeachTorso["Ln"] = len(ccmp2['Ln'])
+                # -----------------------Area of each Negative Torso--------------------# in progress
+                    # AreaofeachTorsoRn = 0
+                    # for i in ccmp2["Rn"]:
+                    #     for s in i:
+                    #         AreaofeachTorsoRn = AreaofeachTorsoRn + 1
+                    # 
+                    # AreaofeachTorsoLn = 0
+                    # for i in ccmp2['Ln']:
+                    #     for s in i:
+                    #         AreaofeachTorsoLn = AreaofeachTorsoLn + 1
                     
-                # -----------------------RMS of each Negative Torso--------------------#
+                # -----------------------RMS of each Negative Torso--------------------# in progress
+                    # squared3 = []
+                    # # squares all values in ccmp2["Rp"]
+                    # for i in ccmp2["Rn"]:
+                    #     for j in i:
+                    #         del j[0:3]
+                    #         squared3.append([s ** 2 for s in j])
+                    # 
+                    # empty3 = []
+                    # # sums numbers in each list
+                    # for numbers in squared3:
+                    #     number = sum(numbers)
+                    #     empty3.append(number)
+                    # sum3 = sum(empty3)
+                    # RMSRn = np.sqrt(sum3/len(empty3))
+                    # 
+                    # squared4 = []
+                    # # squares all values in ccmp2["Rp"]
+                    # for i in ccmp2["Ln"]:
+                    #     for j in i:
+                    #         del j[0:3]
+                    #         squared4.append([s ** 2 for s in j])
+                    # empty4 = []
+                    # # sums numbers in each list
+                    # for numbers in squared4:
+                    #     number = sum(numbers)
+                    #     empty4.append(number)
+                    # sum4 = sum(empty4)
+                    # RMSLn = np.sqrt(sum4/len(empty4))
+                
                 # -----------------------MaxDev of each Negative Torso--------------------#
                     def max2(data):
                         # ...not done
