@@ -329,9 +329,9 @@ for subdir, dirs, files in os.walk(path):
                                         
                             for i in range(len(types)):
                                 centroid2[types[i]].append(sum(ccmp2[types[i]])/len(ccmp2[types[i]]))
-                                normalx2[types[i]].append((centroid2[types[i]][0])/twidth)
-                                normaly2[types[i]].append((centroid2[types[i]][0])/theight)
-                                normaly2[types[i]].append((centroid2[types[i]][0])/tdepth)
+                                normalx2[types[i]].append((centroid2[types[i]])/twidth)
+                                normaly2[types[i]].append((centroid2[types[i]])/theight)
+                                normaly2[types[i]].append((centroid2[types[i]])/tdepth)
                                 
             # ---------------------Transferring to Excel----------------------------#
             # IW: Not sure if all these variables are necessary, you can remove any that aren't actually needed
