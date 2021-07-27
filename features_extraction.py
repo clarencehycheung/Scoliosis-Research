@@ -346,6 +346,17 @@ for subdir, dirs, files in os.walk(path):
                     #     for s in i:
                     #         AreaofeachTorsoLp = AreaofeachTorsoLp + 1
                     
+
+                    # @Nehal @Clarence maybe try something like this?
+                    # def RMS_fn(x):
+                    #     return np.sqrt(np.mean(np.asarray(x)[:, 3]**2))
+                    # def max_dev_fn(x):
+                    #     return max(np.asarray(x)[:, 3])
+                    #
+                    # RMS[i] = list(map(RMS_fn, ccmp[i]))
+                    # max_dev[i] = list(map(max_dev_fn, ccmp[i]))
+
+
                 # -----------------------RMS of each positive Torso--------------------# in progess
                     # squared1 = []
                     # # squares all values in ccmp2["Rp"]
