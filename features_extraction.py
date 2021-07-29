@@ -300,38 +300,52 @@ for subdir, dirs, files in os.walk(path):
 
                     # -------Filter false patches at waist, neck, and shoulders--------#
 
-                            patchlimitLy = 0.05
-                            patchlimitUy = 0.88
+                    patchlimitLy = 0.05
+                    patchlimitUy = 0.88
 
-                            patchlimitSy = 0.67
-                            patchlimitSx = 0.35
+                    patchlimitSy = 0.67
+                    patchlimitSx = 0.35
 
-                            Splaneangle = 20
+                    Splaneangle = 20
 
-                            # R
-                            SnormR = [math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
-                            SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
+                    # R
+                    SnormR = [math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
+                    SvectR = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
 
-                            # L
-                            SnormL = [(-1) * math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
-                            SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
+                    # L
+                    SnormL = [(-1) * math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
+                    SvectL = [(-1) * math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
 
-                            ccmp2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
-                            types = ["Rp", "Rn", "Lp", "Ln"]
+                    centroid2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+                    ccmp2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+                    normalx2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+                    normaly2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+                    normalz2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
 
-                            for i in range(len(types)):
-                                for j in range(len(normaly[types[i]])):
-                                    if normaly[types[i]][j] > patchlimitLy and (normaly[types[i]][j] < patchlimitSy or (
-                                            normaly[types[i]][j] < patchlimitUy and create_plane(SnormR, twidth, theight,
-                                                                                                 normalx[types[i]][j],
-                                                                                                 normaly[types[i]][j]) < 0)):
-                                        ccmp2[types[i]].append(ccmp[types[i]][j])
-                                        
-                            for i in range(len(types)):
-                                centroid2[types[i]].append(sum(ccmp2[types[i]])/len(ccmp2[types[i]]))
-                                normalx2[types[i]].append((centroid2[types[i]])/twidth)
-                                normaly2[types[i]].append((centroid2[types[i]])/theight)
-                                normaly2[types[i]].append((centroid2[types[i]])/tdepth)
+                    types = ["Rp", "Rn", "Lp", "Ln"]
+                    
+                    for l in range(len(types)):
+                        for j in range(len(normaly[types[l]])):
+                            if normaly[types[l]][j] > patchlimitLy and (normaly[types[l]][j] < patchlimitSy or (
+                                    normaly[types[l]][j] < patchlimitUy and create_plane(SnormR, twidth, theight,
+                                                                                         normalx[types[l]][j],
+                                                                                         normaly[types[l]][j]) < 0)):
+                                ccmp2[types[l]].append(ccmp[types[l]][j])
+        
+                    for l in range(len(types)):
+                        centroid2[types[l]].append(sum(ccmp2[types[l]])/len(ccmp2[types[l]]))
+                        normalx2[types[l]].append((centroid2[types[l]][0])/twidth)
+                        normaly2[types[l]].append((centroid2[types[l]][1])/theight)
+                        normalz2[types[l]].append((centroid2[types[l]][2])/tdepth)
+
+                    torso = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+
+                    for l in range(len(types)):
+                        for j in range(len(normaly2[types[l]])):
+                            if normaly2[types[l]][j] < 0.33:
+                                torso[types[l]].append("L")
+                            else:
+                                torso[types[l]].append("T-L")
                                 
                 # -----------------------Area of each positive Torso--------------------# in progress
                     # number of points
