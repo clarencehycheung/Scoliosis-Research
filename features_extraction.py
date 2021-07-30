@@ -12,11 +12,55 @@ import open3d as o3
 import copy
 import math
 
-# -------------------------Set initial values------------------------------#
-Threshold1 = [3, 9.33]
-initial = 1
-initial1 = 1
-numberofthre = len(Threshold1)
+
+# -------------------------Define functions------------------------------#
+# square error function for optimization
+def optimize_transform(r):
+    p1 = r[0]
+    p2 = r[1]
+    p3 = r[2]
+    th = r[3]
+    Qq = np.array([[-p1 ** 2 * (1 + np.cos(th)) + np.cos(th), -p1 * p2 * (1 + np.cos(th)) + p3 * np.sin(th),
+                    -p1 * p3 * (1 + np.cos(th)) - p2 * np.sin(th)],
+                   [-p1 * p2 * (1 + np.cos(th)) - p3 * np.sin(th), -p2 ** 2 * (1 + np.cos(th)) + np.cos(th),
+                    -p2 * p3 * (1 + np.cos(th)) + p1 * np.sin(th)],
+                   [-p1 * p3 * (1 + np.cos(th)) + p2 * np.sin(th),
+                    -p2 * p3 * (1 + np.cos(th)) - p1 * np.sin(th),
+                    -p3 ** 2 * (1 + np.cos(th)) + np.cos(th)]])
+    square_error = 0
+    for m, n in np.nditer([Qq, Q]):
+        square_error += (m - n) ** 2
+    return square_error
+
+
+# plane function for patch filtering
+def create_plane(normalvector, twidth, theight, x, y, xlimit, ylimit):
+    return twidth * normalvector[0] * (x - xlimit) + theight * normalvector[1] * (y - ylimit)
+
+
+def RMS_fn(x):
+    return np.sqrt(np.mean(np.asarray(x)[:, 3] ** 2))
+
+
+def max_dev_fn(x, i):
+    if i[1] == "p":
+        def max_dev(y):
+            return max(np.asarray(y)[:, 3])
+    else:
+        def max_dev(y):
+            return min(np.asarray(y)[:, 3])
+    return map(max_dev, x)
+
+
+def locate(y):
+    if y < 0.33:
+        return "L"
+    else:
+        return "T-L"
+
+
+# -------------------------Loop through sub-folders------------------------------#
+thresholds = [3, 9.33]
 
 # Prompting user to select the parent folder
 path = askdirectory(title='Select Folder')
@@ -24,6 +68,7 @@ path = askdirectory(title='Select Folder')
 # Loops through the subfolders in the parent folder and finds the EDM-1.csv files
 for subdir, dirs, files in os.walk(path):
     for sub_folder in dirs:
+        print("\nfolder: " + sub_folder)
         filepath = subdir + os.sep + sub_folder
         # filepath = subdir + os.sep + file
         datafile = pd.read_csv(filepath + '\EDM-1.csv', header=None)
@@ -39,37 +84,14 @@ for subdir, dirs, files in os.walk(path):
 
         # ---------------Adjust alignment (aligns best plane of symmetry with the yz-plane)--------------------#
 
-        bfmatfile = open(filepath + os.sep + 'bfmat.tfm', 'r').read().split()[:12] # read best fit alignment transformation matrix
+        bfmatfile = open(filepath + os.sep + 'bfmat.tfm', 'r').read().split()[
+                    :12]  # read best fit alignment transformation matrix
         bfmatfile = [float(i) for i in bfmatfile]
         bfmat = np.reshape(np.array(bfmatfile), [3, 4])
         Q = bfmat[:, :3]
         c = bfmat[:, 3]
         # Fixed point on plane
         x = np.matmul(np.linalg.inv(np.identity(3) - Q), c)
-
-        # define square error function
-        def optimize_transform(r):
-            p1 = r[0]
-            p2 = r[1]
-            p3 = r[2]
-            th = r[3]
-            Qq = np.array([[-p1 ** 2 * (1 + np.cos(th)) + np.cos(th), -p1 * p2 * (1 + np.cos(th)) + p3 * np.sin(th),
-                            -p1 * p3 * (1 + np.cos(th)) - p2 * np.sin(th)],
-                           [-p1 * p2 * (1 + np.cos(th)) - p3 * np.sin(th), -p2 ** 2 * (1 + np.cos(th)) + np.cos(th),
-                            -p2 * p3 * (1 + np.cos(th)) + p1 * np.sin(th)],
-                           [-p1 * p3 * (1 + np.cos(th)) + p2 * np.sin(th),
-                            -p2 * p3 * (1 + np.cos(th)) - p1 * np.sin(th),
-                            -p3 ** 2 * (1 + np.cos(th)) + np.cos(th)]])
-            square_error = 0
-            for m, n in np.nditer([Qq, Q]):
-                square_error += (m - n) ** 2
-            return square_error
-
-        # function to create a plane
-        def create_plane(normalvector, twidth, theight, x, y, xlimit):
-            patchlimitsy = 0.67
-
-            return twidth * normalvector[0] * (x - xlimit) + theight * normalvector[1] * (y - patchlimitsy)
 
         # Best plane of symmetry
         result_opt = minimize(optimize_transform, [-1, 0, 0, 0])
@@ -117,12 +139,11 @@ for subdir, dirs, files in os.walk(path):
         # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.05)
         # ax.scatter(centerx, centery, centerz, color='r', alpha=1)
 
-        yzclosestpoint = data3D
+        yz_close_pts = data3D
         # Finds all points that x-values are 4 apart from mean
-        yzclosestpoint = yzclosestpoint[yzclosestpoint[1] < (centerx + 4)]
-        yzclosestpoint = yzclosestpoint[yzclosestpoint[1] > (centerx - 4)]
+        yz_close_pts = yz_close_pts[abs(yz_close_pts[1]) < 4]
         # Finds points with z values greater than mean so all back points are eliminated
-        B6 = yzclosestpoint
+        B6 = yz_close_pts
         B6 = B6[B6[3] > centerz]
         # Plot
         # ax = fig.add_subplot(4, 4, 6, projection='3d')
@@ -131,12 +152,13 @@ for subdir, dirs, files in os.walk(path):
 
         # Finds the lowest point on the back
         B4 = B6[2].idxmin()
-        B4 = B6.loc[[B4]]
+        back_pt = B6.loc[[B4]]
+
         # Plot with lowest back point
         # ax = fig.add_subplot(4, 4, 7, projection='3d')
         # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.05)
-        # ax.scatter(B4[1], B4[2], B4[3], color='r', alpha=1)
-        # Plot with centerx plane, yzclosest points, B4
+        # ax.scatter(back_pt[1], back_pt[2], back_pt[3], color='r', alpha=1)
+        # Plot with centerx plane, yzclosest points, back_pt
         #
 
         # ---------------Move Origin to Back Point-----------------#
@@ -145,7 +167,7 @@ for subdir, dirs, files in os.walk(path):
         Translate_matrix = np.array([[1, 0, 0, 0],
                                      [0, 1, 0, 0],
                                      [0, 0, 1, 0],
-                                     [0, float(-B4[2]), float(-B4[3]), 1]])
+                                     [0, float(-back_pt[2]), float(-back_pt[3]), 1]])
         tpts = np.matmul(data3D_ones, Translate_matrix)[:, :-1]
 
         # ---------------Add STD Column to data3D-----------------#
@@ -153,8 +175,8 @@ for subdir, dirs, files in os.walk(path):
         data3Dnewco['STD'] = STDcol
 
         # ------------------Finding Height of Torso----------------------#
-        maxy = max(tpts[2])
-        miny = min(tpts[2])
+        maxy = max(tpts[:, 1])
+        miny = min(tpts[:, 1])
         theight = maxy - miny
         # Plot with maxy and miny planes
         # fig = plt.figure()
@@ -167,8 +189,8 @@ for subdir, dirs, files in os.walk(path):
         # ax.plot_surface(X=plane1, Y=float(miny), Z=plane2, color='b', alpha=0.6)
 
         # ------------------Finding Width of Torso----------------------#
-        maxx = max(tpts[1])
-        minx = min(tpts[1])
+        maxx = max(tpts[:, 0])
+        minx = min(tpts[:, 0])
         twidth = maxx - minx
         # Plot with maxx and minx planes
         # ax = fig.add_subplot(4, 4, 2, projection='3d')
@@ -177,8 +199,8 @@ for subdir, dirs, files in os.walk(path):
         # ax.plot_surface(X=float(minx), Y=plane1, Z=plane2, color='b', alpha=0.6)
 
         # ------------------Finding Depth of Torso----------------------#
-        maxz = max(tpts[3])
-        minz = min(tpts[3])
+        maxz = max(tpts[:, 2])
+        minz = min(tpts[:, 2])
         tdepth = maxz - minz
         # Plot with maxz, miny planes
         #
@@ -193,7 +215,7 @@ for subdir, dirs, files in os.walk(path):
 
         # -------Separate positive and negative patches on left and right side--------#
 
-        for threshold in Threshold1:
+        for t, threshold in enumerate(thresholds):
             dataDCM = {"Rp": pd.DataFrame(), "Rn": pd.DataFrame(), "Lp": pd.DataFrame(), "Ln": pd.DataFrame()}
             # for k,l in dataDCM.items():
             #     exec(f"{k}=l")
@@ -213,14 +235,14 @@ for subdir, dirs, files in os.walk(path):
             # print(dataDCM)
 
             dictDCM = {"Rp": {}, "Rn": {}, "Lp": {}, "Ln": {}}
-            centroid = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for trcentrRp, trcentrLp, ...
-            ccmp = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for ccmpRp, ccmpLp, ...
-            # area = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for AreaofeachTorsoRp, AreaofTorsoLp, ... (before cropping)
-            normalx = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for NormalxRp, NormalxLp, ...
-            normaly = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for NormalyRp, NormalyLp, ...
-            normalz = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for NormalzRp, NormalzLp, ...
+            centroid = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}  # for trcentrRp, trcentrLp, ...
+            ccmp = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}  # for ccmpRp, ccmpLp, ...
+            centroid2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}  # for after patch filtering
             ccmp2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
-            centroid2 = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}
+            # area = {"Rp": [], "Rn": [], "Lp": [], "Ln": []} # for AreaofeachTorsoRp, AreaofTorsoLp, ...
+            normalx = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}  # for NormalxRp, NormalxLp, ...
+            normaly = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}  # for NormalyRp, NormalyLp, ...
+            normalz = {"Rp": [], "Rn": [], "Lp": [], "Ln": []}  # for NormalzRp, NormalzLp, ...
             result = {"Rp": pd.DataFrame(), "Rn": pd.DataFrame(), "Lp": pd.DataFrame(), "Ln": pd.DataFrame()}
             result2 = {"Rp": pd.DataFrame(), "Rn": pd.DataFrame(), "Lp": pd.DataFrame(), "Ln": pd.DataFrame()}
 
@@ -245,10 +267,8 @@ for subdir, dirs, files in os.walk(path):
                 cloudDCM.estimate_normals()
                 cloudDCM.orient_normals_consistent_tangent_plane(4)
                 cloudDCM.paint_uniform_color(red)
-                # depth = 5
-                # distance = np.asarray(cloudDCMRp.compute_nearest_neighbor_distance())
-                mu_distance = 4  # np.mean(distance)
-                radii_list = o3.utility.DoubleVector(np.array([0.50, 1.00, 1.5, 2.00]) * mu_distance)
+                mu_distance = 2
+                radii_list = o3.utility.DoubleVector(np.array([4, 4.5]) * mu_distance)  # testing radius size
                 meshDCM = o3.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd=cloudDCM,
                                                                                          radii=radii_list)
                 meshDCM.compute_triangle_normals()
@@ -256,7 +276,8 @@ for subdir, dirs, files in os.walk(path):
                 meshDCM.paint_uniform_color(gray)
                 # o3.visualization.draw_geometries([meshDCM, cloudDCM], mesh_show_wireframe=True,
                 #                                  mesh_show_back_face=True)
-                # print(meshDCM.get_surface_area())
+
+                # print(meshDCM.get_surface_area()) # total surface area
 
                 triangle_clusters0, cluster_n_triangles0, cluster_area0 = (
                     meshDCM.cluster_connected_triangles())
@@ -275,11 +296,10 @@ for subdir, dirs, files in os.walk(path):
                 cluster_n_triangles = np.asarray(cluster_n_triangles)
                 cluster_area = np.asarray(cluster_area)
 
-                area = []
-
                 # -------Separate individual patches--------#
                 mesh_all = copy.deepcopy(meshDCM)
                 remove_idx = []
+                area = []
                 for k, surface_area in enumerate(cluster_area):
                     mesh_single = copy.deepcopy(mesh_all)
                     remove_rest = triangle_clusters != k
@@ -300,23 +320,14 @@ for subdir, dirs, files in os.walk(path):
                 remove_all = np.any(remove_idx, axis=0)
                 meshDCM.remove_triangles_by_mask(remove_all)
                 meshDCM.remove_unreferenced_vertices()
+
                 # plot them?
-                def RMS_fn(x):
-                    return np.sqrt(np.mean(np.asarray(x)[:, 3]**2))
-                def max_dev_fn(x):
-                    return max(np.asarray(x)[:, 3])
-                def locate(x):
-                    if x < 0.33:
-                        return "L"
-                    else:
-                        return "T-L"
 
-                # RMS[i] = list(map(RMS_fn, ccmp[i]))
-                # max_dev[i] = list(map(max_dev_fn, ccmp[i]))
-
+                # results before patch filtering
+                # Deviation RMS, Maximum deviation, patch area, and normalized centroid coordinates
                 result[i] = pd.DataFrame({
                     "RMS" + sign: map(RMS_fn, ccmp[i]),
-                    "Max_Dev" + sign: map(max_dev_fn, ccmp[i]),
+                    "Max Dev" + sign: max_dev_fn(ccmp[i], i),
                     "Area" + sign: area,
                     "Normal x" + sign: (np.asarray(centroid[i])[:, 0] / twidth),
                     "Normal y" + sign: (np.asarray(centroid[i])[:, 1] / theight),
@@ -325,42 +336,54 @@ for subdir, dirs, files in os.walk(path):
 
                 result[i]["Location" + sign] = list(map(locate, result[i]["Normal y" + sign]))
 
-                print(result[i])
+                # print(threshold, i)
+                # print(result[i])
 
                 # -------Filter false patches at waist, neck, and shoulders--------#
-                patchlimitLy = 0.05
-                patchlimitUy = 0.88
+                # upper and lower plane
+                lower_limit_y = [0.04, 0.04]
+                upper_limit_y = [0.92, 0.94]
 
-                patchlimitsy = 0.67
-                patchlimitsx = 0.35
+                # shoulder plane
+                shoulder_limit_y = [0.58, 0.58]
+                shoulder_limit_x = [0.45, 0.46]
+                shoulder_angle = 15
 
-                Splaneangle = 20
                 if i[0] == "L":
-                    Splaneangle = 180-Splaneangle
-                    patchlimitsx = -patchlimitsx
+                    shoulder_angle = 180 - shoulder_angle
+                    shoulder_limit_x[t] = -shoulder_limit_x[t]
 
-                # R
-                Snorm = [math.cos(math.radians(Splaneangle)), math.sin(math.radians(Splaneangle))]
-                Svect = [math.cos(math.radians(90 + Splaneangle)), math.sin(math.radians(90 + Splaneangle))]
+                shoulder_norm = [math.cos(math.radians(shoulder_angle)),
+                                 math.sin(math.radians(shoulder_angle))]  # plane normal vector
+                shoulder_tang = [math.cos(math.radians(90 + shoulder_angle)),
+                                 math.sin(math.radians(90 + shoulder_angle))]  # plane tangent vector
 
+                # results after patch filtering
                 result2[i] = pd.DataFrame()
-                for index, row in result[i].iterrows():
-                    if row["Normal y" + sign] > patchlimitLy and (row["Normal y" + sign] < patchlimitsy or (
-                            row["Normal y" + sign] < patchlimitUy and create_plane(Snorm, twidth, theight,
-                                                                            row["Normal x" + sign],
-                                                                            row["Normal y" + sign],
-                                                                            patchlimitsx) < 0)):
+                for row_idx, row in result[i].iterrows():
+                    if row["Normal y" + sign] > lower_limit_y[t] and (row["Normal y" + sign] < shoulder_limit_y[t] or (
+                            row["Normal y" + sign] < upper_limit_y[t] and create_plane(shoulder_norm, twidth, theight,
+                                                                                       row["Normal x" + sign],
+                                                                                       row["Normal y" + sign],
+                                                                                       shoulder_limit_x[t],
+                                                                                       shoulder_limit_y[t]) < 0)):
                         result2[i] = result2[i].append(row)
-                        ccmp2[i].append(ccmp[i][index])
-                        centroid2[i].append(centroid[i][index])
+                        ccmp2[i].append(ccmp[i][row_idx])
+                        centroid2[i].append(centroid[i][row_idx])
                 result2[i] = result2[i].reindex(columns=result[i].columns)
 
                 # plots here!
 
-            resultsR = pd.concat([result2["Rp"], result2["Rn"]], axis=1)
-            resultsL = pd.concat([result2["Lp"], result2["Ln"]], axis=1)
+            # create right and left result sets
+            result_R = pd.concat([result2["Rp"], result2["Rn"]], axis=1)
+            result_L = pd.concat([result2["Lp"], result2["Ln"]], axis=1)
             with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', None):
-                print(resultsR)
-                print(resultsL)
-            resultsR.to_csv(filepath + '\Features-Right-' + sub_folder + '-' + str(threshold) + 'mm.csv', index=False)
-            resultsL.to_csv(filepath + '\Features-Left-' + sub_folder + '-' + str(threshold) + 'mm.csv', index=False)
+                print(sub_folder + "-Right-" + str(threshold) + "mm")
+                print(result_R)
+                print(sub_folder + "-Left-" + str(threshold) + "mm")
+                print(result_L)
+                print()
+
+            # save results to .csv
+            result_R.to_csv(filepath + '\Features-Right-' + sub_folder + '-' + str(threshold) + 'mm.csv', index=False)
+            result_L.to_csv(filepath + '\Features-Left-' + sub_folder + '-' + str(threshold) + 'mm.csv', index=False)
