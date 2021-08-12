@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    202733,       4402]
-NotebookOptionsPosition[    202035,       4381]
-NotebookOutlinePosition[    202544,       4400]
-CellTagsIndexPosition[    202501,       4397]
+NotebookDataLength[    203073,       4411]
+NotebookOptionsPosition[    202375,       4390]
+NotebookOutlinePosition[    202884,       4409]
+CellTagsIndexPosition[    202841,       4406]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -848,10 +848,8 @@ Cell[BoxData[
           RowBox[{"faster", " ", "now"}], "*)"}], "\[IndentingNewLine]", 
          RowBox[{"Clear", "[", 
           RowBox[{
-          "maxy", ",", "miny", ",", "xzplane1", ",", "xzplane2", ",", 
-           "theight", ",", "maxx", ",", "minx", ",", "yzplane1", ",", 
-           "yzplane2", ",", "twidth", ",", "maxz", ",", "minz", ",", 
-           "xyplane1", ",", "xyplane2", ",", "tdepth"}], "]"}], ";", 
+          "maxy", ",", "miny", ",", "theight", ",", "maxx", ",", "minx", ",", 
+           "twidth", ",", "maxz", ",", "minz", ",", "tdepth"}], "]"}], ";", 
          "\[IndentingNewLine]", 
          RowBox[{"maxy", "=", 
           RowBox[{
@@ -876,31 +874,34 @@ Cell[BoxData[
              "]"}], "]"}], "[", 
            RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
          "\[IndentingNewLine]", 
-         RowBox[{"xzplane1", "=", 
-          RowBox[{"InfinitePlane", "[", 
-           RowBox[{"maxy", ",", 
-            RowBox[{"{", 
-             RowBox[{
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{"xzplane1", "=", 
+            RowBox[{"InfinitePlane", "[", 
+             RowBox[{"maxy", ",", 
               RowBox[{"{", 
-               RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}],
+            ";", "\[IndentingNewLine]", 
+           RowBox[{"xzplane2", "=", 
+            RowBox[{"InfinitePlane", "[", 
+             RowBox[{"miny", ",", 
               RowBox[{"{", 
-               RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}], 
-         ";", "\[IndentingNewLine]", 
-         RowBox[{"xzplane2", "=", 
-          RowBox[{"InfinitePlane", "[", 
-           RowBox[{"miny", ",", 
-            RowBox[{"{", 
-             RowBox[{
-              RowBox[{"{", 
-               RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", 
-              RowBox[{"{", 
-               RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}], 
-         ";", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}],
+            ";"}], "*)"}], "\[IndentingNewLine]", 
          RowBox[{"theight", "=", 
           RowBox[{
-           RowBox[{"RegionDistance", "[", 
-            RowBox[{"xzplane2", ",", "maxy"}], "]"}], "//", "Simplify"}]}], 
-         ";", "\[IndentingNewLine]", 
+           RowBox[{"maxy", "[", 
+            RowBox[{"[", "2", "]"}], "]"}], "-", 
+           RowBox[{"miny", "[", 
+            RowBox[{"[", "2", "]"}], "]"}]}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"(*", 
           RowBox[{"Show", "[", 
            RowBox[{"TorsoPlot", ",", 
@@ -965,31 +966,34 @@ Cell[BoxData[
              "]"}], "]"}], "[", 
            RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
          "\[IndentingNewLine]", 
-         RowBox[{"yzplane1", "=", 
-          RowBox[{"InfinitePlane", "[", 
-           RowBox[{"maxx", ",", 
-            RowBox[{"{", 
-             RowBox[{
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{"yzplane1", "=", 
+            RowBox[{"InfinitePlane", "[", 
+             RowBox[{"maxx", ",", 
               RowBox[{"{", 
-               RowBox[{"0", ",", "1", ",", "0"}], "}"}], ",", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "1", ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}],
+            ";", "\[IndentingNewLine]", 
+           RowBox[{"yzplane2", "=", 
+            RowBox[{"InfinitePlane", "[", 
+             RowBox[{"minx", ",", 
               RowBox[{"{", 
-               RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}], 
-         ";", "\[IndentingNewLine]", 
-         RowBox[{"yzplane2", "=", 
-          RowBox[{"InfinitePlane", "[", 
-           RowBox[{"minx", ",", 
-            RowBox[{"{", 
-             RowBox[{
-              RowBox[{"{", 
-               RowBox[{"0", ",", "1", ",", "0"}], "}"}], ",", 
-              RowBox[{"{", 
-               RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}], 
-         ";", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "1", ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}],
+            ";"}], "*)"}], "\[IndentingNewLine]", 
          RowBox[{"twidth", "=", 
           RowBox[{
-           RowBox[{"RegionDistance", "[", 
-            RowBox[{"yzplane1", ",", "minx"}], "]"}], "//", "Simplify"}]}], 
-         ";", "\[IndentingNewLine]", 
+           RowBox[{"maxx", "[", 
+            RowBox[{"[", "1", "]"}], "]"}], "-", 
+           RowBox[{"minx", "[", 
+            RowBox[{"[", "1", "]"}], "]"}]}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"(*", 
           RowBox[{"Show", "[", 
            RowBox[{"TorsoPlot", ",", 
@@ -1054,31 +1058,34 @@ Cell[BoxData[
              "]"}], "]"}], "[", 
            RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
          "\[IndentingNewLine]", 
-         RowBox[{"xyplane1", "=", 
-          RowBox[{"InfinitePlane", "[", 
-           RowBox[{"maxz", ",", 
-            RowBox[{"{", 
-             RowBox[{
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{"xyplane1", "=", 
+            RowBox[{"InfinitePlane", "[", 
+             RowBox[{"maxz", ",", 
               RowBox[{"{", 
-               RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "1", ",", "0"}], "}"}]}], "}"}]}], "]"}]}],
+            ";", "\[IndentingNewLine]", 
+           RowBox[{"xyplane2", "=", 
+            RowBox[{"InfinitePlane", "[", 
+             RowBox[{"minz", ",", 
               RowBox[{"{", 
-               RowBox[{"0", ",", "1", ",", "0"}], "}"}]}], "}"}]}], "]"}]}], 
-         ";", "\[IndentingNewLine]", 
-         RowBox[{"xyplane2", "=", 
-          RowBox[{"InfinitePlane", "[", 
-           RowBox[{"minz", ",", 
-            RowBox[{"{", 
-             RowBox[{
-              RowBox[{"{", 
-               RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", 
-              RowBox[{"{", 
-               RowBox[{"0", ",", "1", ",", "0"}], "}"}]}], "}"}]}], "]"}]}], 
-         ";", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"1", ",", "0", ",", "0"}], "}"}], ",", 
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "1", ",", "0"}], "}"}]}], "}"}]}], "]"}]}],
+            ";"}], "*)"}], "\[IndentingNewLine]", 
          RowBox[{"tdepth", "=", 
           RowBox[{
-           RowBox[{"RegionDistance", "[", 
-            RowBox[{"xyplane1", ",", "minz"}], "]"}], "//", "Simplify"}]}], 
-         ";", "\[IndentingNewLine]", 
+           RowBox[{"maxz", "[", 
+            RowBox[{"[", "3", "]"}], "]"}], "-", 
+           RowBox[{"minz", "[", 
+            RowBox[{"[", "3", "]"}], "]"}]}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"(*", 
           RowBox[{"Show", "[", 
            RowBox[{"TorsoPlot", ",", 
@@ -4318,8 +4325,10 @@ Cell[BoxData[
    3.836488424535532*^9, 3.8364884406761103`*^9}, {3.836488490066434*^9, 
    3.8364884935824995`*^9}, {3.836488611940072*^9, 3.83648861450286*^9}, {
    3.836491343041638*^9, 3.836491357807056*^9}, {3.8372766266353035`*^9, 
-   3.837276626885744*^9}, {3.837527001454241*^9, 3.837527001726366*^9}},
- CellLabel->"In[35]:=",ExpressionUUID->"78e5c49f-b480-4b02-ad5f-ae0bf0db7302"],
+   3.837276626885744*^9}, {3.837527001454241*^9, 3.837527001726366*^9}, {
+   3.8377787341492033`*^9, 3.8377787886624503`*^9}, {3.837778953248723*^9, 
+   3.837778963976011*^9}},ExpressionUUID->"78e5c49f-b480-4b02-ad5f-\
+ae0bf0db7302"],
 
 Cell[BoxData["\<\"Folder order to check={B1\\\\, B2\\\\, B3\\\\, B4\\\\, B5\\\
 \\}\"\>"], "Print",
@@ -4400,9 +4409,9 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 197880, 4299, 13685, "Input",ExpressionUUID->"78e5c49f-b480-4b02-ad5f-ae0bf0db7302"],
-Cell[198463, 4323, 1786, 27, 32, "Print",ExpressionUUID->"4cfb68d7-e269-4401-8a20-e10d41fef92a"],
-Cell[200252, 4352, 1767, 26, 46, "Output",ExpressionUUID->"fc5e70bf-8d9e-405f-bc00-6173c3a69a3e"]
+Cell[580, 22, 198220, 4308, 13685, "Input",ExpressionUUID->"78e5c49f-b480-4b02-ad5f-ae0bf0db7302"],
+Cell[198803, 4332, 1786, 27, 32, "Print",ExpressionUUID->"4cfb68d7-e269-4401-8a20-e10d41fef92a"],
+Cell[200592, 4361, 1767, 26, 46, "Output",ExpressionUUID->"fc5e70bf-8d9e-405f-bc00-6173c3a69a3e"]
 }, Open  ]]
 }
 ]

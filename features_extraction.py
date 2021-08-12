@@ -12,6 +12,7 @@ import open3d as o3
 import copy
 import math
 from itertools import compress
+from cycler import cycler
 
 
 # -------------------------Define functions------------------------------#
@@ -62,6 +63,10 @@ def locate(y):
 
 # -------------------------Loop through sub-folders------------------------------#
 thresholds = [3, 9.33]
+
+# labels and colors for plotting
+ccmp_label = {'Rp': 'Right Positive', 'Rn': 'Right Negative', 'Lp': 'Left Positive', 'Ln': 'Left Negative'}
+center_color = {'Rp': '#FF39E0', 'Rn': '#FF39E0', 'Lp': '#00FFE4', 'Ln': '#00FFE4'}
 
 # Prompting user to select the parent folder
 path = askdirectory(title='Select Folder')
@@ -136,7 +141,7 @@ for subdir, dirs, files in os.walk(path):
         center_z = sum(data3D[3]) / len(data3D[3])
         # Plot
         # ax = fig.add_subplot(4, 4, 5, projection='3d')
-        # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.05)
+        # ax.scatter(data3D[1], data3D[2], data3D[3], s=0.02, c='tab:gray')
         # ax.scatter(center_x, center_y, center_z, color='r', alpha=1)
 
         yz_close_pts = data3D
@@ -147,7 +152,7 @@ for subdir, dirs, files in os.walk(path):
         yz_back_pts = yz_back_pts[yz_back_pts[3] > center_z]
         # Plot
         # ax = fig.add_subplot(4, 4, 6, projection='3d')
-        # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.05)
+        # ax.scatter(data3D[1], data3D[2], data3D[3], s=0.02, c='tab:gray')
         # ax.scatter(yz_back_pts[1], yz_back_pts[2], yz_back_pts[3], color='r', alpha=1)
 
         # Finds the lowest point on the back
@@ -156,7 +161,7 @@ for subdir, dirs, files in os.walk(path):
 
         # Plot with lowest back point
         # ax = fig.add_subplot(4, 4, 7, projection='3d')
-        # ax.scatter(data3D[1], data3D[2], data3D[3], c='tab:gray', alpha=0.05)
+        # ax.scatter(data3D[1], data3D[2], data3D[3], s=0.02, c='tab:gray')
         # ax.scatter(back_pt[1], back_pt[2], back_pt[3], color='r', alpha=1)
         # Plot with center_x plane, yzclosest points, back_pt
         #
@@ -181,9 +186,9 @@ for subdir, dirs, files in os.walk(path):
         # Plot with max_y and min_y planes
         # fig = plt.figure()
         # ax = fig.add_subplot(4, 4, 1, projection='3d')
-        # ax.scatter(tpts[1], tpts[2], tpts[3], c='tab:gray', alpha=0.1)
-        # axis1 = np.linspace(-300, 300, 300)
-        # axis2 = np.linspace(-300, 300, 300)
+        # ax.scatter(tpts[:, 0], tpts[:, 1], tpts[:, 2], s=0.02, c='tab:gray')
+        # axis1 = np.linspace(-300, 300, 5)
+        # axis2 = np.linspace(-300, 300, 5)
         # plane1, plane2 = np.meshgrid(axis1, axis2)
         # ax.plot_surface(X=plane1, Y=float(max_y), Z=plane2, color='g', alpha=0.6)
         # ax.plot_surface(X=plane1, Y=float(min_y), Z=plane2, color='b', alpha=0.6)
@@ -194,7 +199,7 @@ for subdir, dirs, files in os.walk(path):
         t_width = max_x - min_x
         # Plot with max_x and min_x planes
         # ax = fig.add_subplot(4, 4, 2, projection='3d')
-        # ax.scatter(tpts[1], tpts[2], tpts[3], c='tab:gray', alpha=0.1)
+        # ax.scatter(tpts[:, 0], tpts[:, 1], tpts[:, 2], s=0.02, c='tab:gray')
         # ax.plot_surface(X=float(max_x), Y=plane1, Z=plane2, color='g', alpha=0.6)
         # ax.plot_surface(X=float(min_x), Y=plane1, Z=plane2, color='b', alpha=0.6)
 
@@ -203,15 +208,19 @@ for subdir, dirs, files in os.walk(path):
         min_z = min(tpts[:, 2])
         t_depth = max_z - min_z
         # Plot with max_z, min_y planes
-        #
-        #
+        # ax = fig.add_subplot(4, 4, 3, projection='3d')
+        # ax.scatter(tpts[:, 0], tpts[:, 1], tpts[:, 2], s=0.02, c='tab:gray')
+        # ax.plot_surface(X=plane2, Y=plane1, Z=np.asarray([[max_z]]), color='g', alpha=0.2)
+        # ax.plot_surface(X=plane1, Y=plane2, Z=np.asarray([[min_z]]), color='b', alpha=0.2)
         # Plot with max_x, max_y, max_z, min_x, min_y, min_z planes
         # ax = fig.add_subplot(4, 4, 4, projection='3d')
-        # ax.scatter(tpts[1], tpts[2], tpts[3], c='tab:gray', alpha=0.1)
+        # ax.scatter(tpts[:, 0], tpts[:, 1], tpts[:, 2], s=0.02, c='tab:gray')
         # ax.plot_surface(X=plane1, Y=float(max_y), Z=plane2, color='g', alpha=0.2)
         # ax.plot_surface(X=plane1, Y=float(min_y), Z=plane2, color='b', alpha=0.2)
         # ax.plot_surface(X=float(max_x), Y=plane1, Z=plane2, color='r', alpha=0.2)
         # ax.plot_surface(X=float(min_x), Y=plane1, Z=plane2, color='y', alpha=0.2)
+        # ax.plot_surface(X=plane2, Y=plane1, Z=np.asarray([[max_z]]), color='m', alpha=0.2)
+        # ax.plot_surface(X=plane1, Y=plane2, Z=np.asarray([[min_z]]), color='c', alpha=0.2)
 
         # -------Separate positive and negative patches on left and right side--------#
         # loop through thresholds
@@ -319,7 +328,7 @@ for subdir, dirs, files in os.walk(path):
                 meshDCM.remove_triangles_by_mask(remove_all)
                 meshDCM.remove_unreferenced_vertices()
 
-                # plot them?
+                # plot them? can put this section further down
 
                 # results before patch filtering
                 # RMS deviation, Maximum deviation, patch area, and normalized centroid coordinates
@@ -360,7 +369,7 @@ for subdir, dirs, files in os.walk(path):
                 # results after patch filtering
                 result2[i] = pd.DataFrame()
 
-                condition_area = result[i]["Area" + sign] > 5000 # testing area threshold
+                condition_area = result[i]["Area" + sign] > 5000  # testing area threshold
                 condition_l = result[i]["Normal y" + sign] > lower_limit_y[th_idx]
                 condition_s = result[i]["Normal y" + sign] < shoulder_limit_y[th_idx]
                 condition_u = result[i]["Normal y" + sign] < upper_limit_y[th_idx]
@@ -375,7 +384,63 @@ for subdir, dirs, files in os.walk(path):
                 centroid2[i] = list(compress(centroid[i], condition_all))
                 ccmp2[i] = list(compress(ccmp[i], condition_all))
 
-                # plots here!
+            # -------Final plot figures--------# WIP consider other method for plotting
+            fig = plt.figure(figsize=(10, 10))
+            ax = fig.add_subplot(111, projection="3d", proj_type="ortho")
+            ax.set_box_aspect((np.ptp(-tpts[:, 0]), np.ptp(tpts[:, 2]), np.ptp(tpts[:, 1])))
+            # ax.set_xlabel("x")
+            # ax.set_ylabel("y")
+            # ax.set_zlabel("z")
+            ax.set_axis_off()
+
+            # plot torso points
+            ax.scatter(-tpts[:, 0], tpts[:, 2], tpts[:, 1], s=0.01, c='grey', alpha=0.9)
+
+            # plot arrows as axis
+            x0, y0, z0 = np.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]])
+            u0, v0, w0 = np.array(
+                [[-max(abs(-tpts[:, 0])) - 30, 0, 0, max(abs(-tpts[:, 0])) + 30], [0, min(tpts[:, 2]) - 30, 0, 0],
+                 [0, 0, max(tpts[:, 1]) + 30, 0]])
+            ax.quiver(x0, y0, z0, u0, v0, w0, linewidth=0.5, arrow_length_ratio=0.025, color="black")
+
+            # set patch colors
+            patch_color_cycle = cycler(
+                color=['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:pink', 'tab:olive',
+                       '#A4ff00', '#800039', 'y'])
+            ax.set_prop_cycle(patch_color_cycle)
+
+            # plot patches and patch centroids
+            for i, center in centroid2.items():
+                if center:
+                    center = np.asarray(center)
+                    if i[1] == "p":
+                        mark = "+"
+                    else:
+                        mark = "_"
+                    ax.scatter(-center[:, 0], center[:, 2], center[:, 1], s=100, marker=mark, c=center_color[i],
+                               linewidths=3, label=ccmp_label[i])
+                    for j, patch in enumerate(ccmp2[i]):
+                        patch = np.asarray(patch)
+                        ax.scatter(-patch[:, 0], patch[:, 2], patch[:, 1], s=3, alpha=0.5, label='patch ' + str(j + 1))
+
+            ax.legend(loc='right')
+            plt.tight_layout()
+
+            # back view
+            ax.view_init(0, 90)
+            # plt.show()
+            plt.savefig(file_path + os.sep + str(threshold) + 'mm-torso-back-final.jpg')
+
+            # side view
+            ax.view_init(0, 180)
+            # plt.show()
+            plt.savefig(file_path + os.sep + str(threshold) + 'mm-torso-side-final.jpg')
+
+            # perspective view
+            ax.view_init(25, 120)
+            ax.set_proj_type('persp')
+            # plt.show()
+            plt.savefig(file_path + os.sep + str(threshold) + 'mm-torso-persp-final.jpg')
 
             # create right and left result sets
             result_R = pd.concat([result2["Rp"], result2["Rn"]], axis=1)
