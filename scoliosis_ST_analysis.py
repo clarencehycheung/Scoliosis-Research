@@ -8,11 +8,14 @@ from scipy.optimize import minimize
 from sympy import Point3D, Plane
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 import open3d as o3
 import copy
 import math
 from itertools import compress
 from cycler import cycler
+import trimesh
 
 
 # -------------------------Define functions------------------------------#
@@ -163,7 +166,12 @@ for subdir, dirs, files in os.walk(path):
         print('mesh file not found')
         quit()
     else:
-        mesh_crop = o3.io.read_triangle_mesh(file_path + r"\cropped mesh.ply")
+        # Convert .ply mesh to .glb
+        mesh_in = trimesh.load(file_path + r"\cropped mesh.ply")
+        mesh_in.export(file_path + r"\cropped mesh.glb")
+        mesh_scene = trimesh.load(file_path + r"\cropped mesh.glb")
+        mesh_tri = list(mesh_scene.geometry.values())[0]
+        mesh_crop = mesh_tri.as_open3d
         # plot of cropped torso mesh
         # o3.visualization.draw_geometries([mesh_crop], mesh_show_wireframe=True, mesh_show_back_face=True)
         data3D0 = pd.DataFrame(mesh_crop.vertices)
@@ -174,6 +182,20 @@ for subdir, dirs, files in os.walk(path):
         data_size = data_dimensions[0]
         # Return transformation matrix and total deviations
         bf_transform, STDcol = meshDevs(mesh_crop)
+
+        # ---------------Export Deviation Map--------------------#
+        # Define color map
+        jet_map = cm.get_cmap('jet')
+        dev_colors = [jet_map(0.05), jet_map(0.1), jet_map(0.2), jet_map(0.3), jet_map(0.4), (0, 1, 6 / 255, 1),
+                      (0, 1, 6 / 255, 1), jet_map(0.6), jet_map(0.7), jet_map(0.8),
+                      jet_map(0.9), jet_map(0.95)]
+        color_scale = [0.0, 0.1, 0.2, 0.3, 0.4, 0.45, 0.55, 0.6, 0.7, 0.8, 0.9, 1]
+        dev_map = LinearSegmentedColormap.from_list("deviation map", list(zip(color_scale, dev_colors)))
+
+        # Apply color map and export as .glb
+        mesh_tri.visual.vertex_colors = trimesh.visual.interpolate(STDcol, color_map=dev_map)
+        # mesh_tri.show()
+        mesh_tri.export(file_path + r"\deviation map.glb")
 
         # ---------------Adjust alignment (aligns best plane of symmetry with the yz-plane)--------------------#
         bf_mat = copy.deepcopy(bf_transform)  # best fit alignment transformation matrix
